@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title id="theTitle">Battleships</title>
+</head>
+
+<script src="angular.min.js"></script>
+<script src="angularMain.js"></script>
+
+<body ng-app="battleships">
+<div class="container main" ng-controller="statCtrl">
+    <div class="row">
+        <div class="span10 offset1" style="text-align: center">
+            <h2>Welcome to Battleships</h2>
+        </div>
+    </div>
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th ng-repeat="colHeader in board[0]">{{$index + 1}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in board">
+                <td><b>{{rowLabels[$index]}}</b></td>
+                <td ng-repeat="cell in row">{{cell.state}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
