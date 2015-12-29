@@ -1,6 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-
+var shipsData = require('./ships.json');
 var app = express();
 
 app.use(express.static('assets'));
@@ -63,9 +63,27 @@ setInterval(function() {
 app.post('/shot',function(req,res){
     console.log(req.body);
     var cell = req.body.cell;
-    board[cell.x][cell.y].state = "H";
+
+    if (checkForShip(cell.x, cell.y)) {
+        board[cell.x][cell.y].state = "H";
+    }
+    else {
+        board[cell.x][cell.y].state = "M";
+    }
     res.send(200);
 });
+
+function checkForShip(x, y) {
+    for (var boat in shipsData.ships) {
+        for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
+            if (shipsData["ships"][boat]["coord"]["x"] === x && shipsData["ships"][boat]["coord"]["y"] === y) {
+                console.log("returned TRUE");
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 app.post('/reset',function(req,res){
     console.log(req.body);

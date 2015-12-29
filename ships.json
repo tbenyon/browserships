@@ -1,0 +1,49 @@
+{
+  "ships": {
+    "aircraftCarrier": {
+      "coord": {
+        "x": 0,
+        "y": 0
+      },
+      "length": 5,
+      "orientation": "x"
+    },
+
+    "battleship": {
+      "coord": {
+        "x": 0,
+        "y": 2
+      },
+      "length": 4,
+      "orientation": "y"
+    },
+
+    "submarine": {
+      "coord": {
+        "x": 5,
+        "y": 1
+      },
+      "length": 3,
+      "orientation": "y"
+    },
+
+    "cruiser": {
+      "coord": {
+        "x": 9,
+        "y": 2
+      },
+      "length": 3,
+      "orientation": "y"
+    },
+
+    "destroyer": {
+      "coord": {
+        "x": 8,
+        "y": 8
+      },
+      "length": 2,
+      "orientation": "x"
+    }
+  }
+}
+
