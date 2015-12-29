@@ -25,7 +25,7 @@
             <tbody>
             <tr ng-repeat="row in board">
                 <td><b>{{rowLabels[$index]}}</b></td>
-                <td ng-repeat="cell in row">{{cell.state}}</td>
+                <td ng-repeat="cell in row" ng-click="shoot($index, $parent.$index)">{{cell.state}}</td>
             </tr>
             </tbody>
         </table>
