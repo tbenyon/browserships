@@ -9,14 +9,18 @@ app.use(bodyParser.json());
 var openConnections = [];
 var board = [];
 
-for (x = 0; x < 5; x++) {
-    board[x] = [];
-    for (y = 0; y < 5; y++) {
-        board[x][y] = {
-            state: "W"
+function setBlankGrid(board) {
+    for (x = 0; x < 5; x++) {
+        board[x] = [];
+        for (y = 0; y < 5; y++) {
+            board[x][y] = {
+                state: "W"
+            }
         }
     }
 }
+
+setBlankGrid(board);
 
 app.get('/', function(req, res) {
     res.sendfile('assets/game.html');
@@ -60,6 +64,12 @@ app.post('/shot',function(req,res){
     console.log(req.body);
     var cell = req.body.cell;
     board[cell.x][cell.y].state = "H";
+    res.send(200);
+});
+
+app.post('/reset',function(req,res){
+    console.log(req.body);
+    setBlankGrid(board);
     res.send(200);
 });
 

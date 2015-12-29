@@ -31,6 +31,11 @@ function boardCtrl($scope, $http) {
         };
         $http.post("http://localhost:3000/shot/", shotData);
     };
+
+    $scope.reset = function() {
+        console.log("reset executed");
+        $http.post("http://localhost:3000/reset/", null);
+    };
 }
 
 function convertBoardDataToHTMLTableViewModel(board) {
