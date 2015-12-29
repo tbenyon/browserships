@@ -1,6 +1,6 @@
 var app = angular.module('battleships', []);
 
-function boardCtrl($scope) {
+function boardCtrl($scope, $http) {
 
     $scope.board = {};
     $scope.rowLabels = function() {
@@ -20,6 +20,17 @@ function boardCtrl($scope) {
 
     var source = new EventSource('/state');
     source.addEventListener('message', handleStateUpdate, false);
+
+    $scope.shoot = function(x, y) {
+        console.log("function executed");
+        var shotData = {
+            cell: {
+                "x": x,
+                "y": y
+            }
+        };
+        $http.post("http://localhost:3000/shot/", shotData);
+    };
 }
 
 function convertBoardDataToHTMLTableViewModel(board) {
@@ -30,4 +41,4 @@ function convertBoardDataToHTMLTableViewModel(board) {
     });
 }
 
-app.controller("statCtrl", ["$scope", boardCtrl]);
+app.controller("statCtrl", ["$scope","$http", boardCtrl]);
