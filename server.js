@@ -10,9 +10,9 @@ var openConnections = [];
 var board = [];
 
 function setBlankGrid(board) {
-    for (x = 0; x < 5; x++) {
+    for (x = 0; x < 10; x++) {
         board[x] = [];
-        for (y = 0; y < 5; y++) {
+        for (y = 0; y < 10; y++) {
             board[x][y] = {
                 state: "W"
             }
