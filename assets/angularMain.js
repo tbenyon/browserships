@@ -29,12 +29,12 @@ function boardCtrl($scope, $http) {
                 "y": y
             }
         };
-        $http.post("http://localhost:3000/shot/", shotData);
+        $http.post("/shot/", shotData);
     };
 
     $scope.reset = function() {
         console.log("reset executed");
-        $http.post("http://localhost:3000/reset/", null);
+        $http.post("/reset/", null);
     };
 }
 
