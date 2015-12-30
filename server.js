@@ -75,14 +75,32 @@ app.post('/shot',function(req,res){
 
 function checkForShip(x, y) {
     for (var boat in shipsData.ships) {
+        var direction = checkDirection();
+        var addToX = direction[0];
+        var addToY = direction[1];
+
         for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
-            if (shipsData["ships"][boat]["coord"]["x"] === x && shipsData["ships"][boat]["coord"]["y"] === y) {
-                console.log("returned TRUE");
+            if (shipsData["ships"][boat]["coord"]["x"] + addToX * i === x && shipsData["ships"][boat]["coord"]["y"] + addToY * i === y) {
                 return true;
             }
         }
     }
     return false;
+
+    function checkDirection() {
+        var addToX = 0;
+        var addToY = 0;
+
+        if (shipsData["ships"][boat]["orientation"] === "x") {
+            addToX = 1;
+        }
+        else {
+            addToY = 1;
+        }
+
+        return [addToX, addToY];
+
+    }
 }
 
 app.post('/reset',function(req,res){
