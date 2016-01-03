@@ -151,8 +151,7 @@ function checkForDestroyedShips() {
     }
 }
 
-app.post('/reset',function(req,res){
-    console.log(req.body);
+app.post('/reset',function(req,res) {
     setBlankGrid(board);
     getShipData();
     checkForDestroyedShips();
