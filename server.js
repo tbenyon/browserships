@@ -40,7 +40,7 @@ app.get('/state', function(req, res) {
 
     openConnections.push(res);
     reportClientConnectionChange('Client connected');
-    updateClients();
+    reportGameStateToClient(res);
 
     req.on("close", function() {
         var toRemove;
@@ -55,12 +55,16 @@ app.get('/state', function(req, res) {
     });
 });
 
-function updateClients() {
-    openConnections.forEach(function(resp) {
-        var d = new Date();
-        resp.write('id: ' + d.getMilliseconds() + '\n');
-        resp.write('data:' + JSON.stringify(getGameState()) +   '\n\n');
+function reportGameStateChange() {
+    openConnections.forEach(function(connection) {
+        reportGameStateToClient(connection);
     });
+}
+
+function reportGameStateToClient(connection) {
+    var d = new Date();
+    connection.write('id: ' + d.getMilliseconds() + '\n');
+    connection.write('data:' + JSON.stringify(getGameState()) +   '\n\n');
 }
 
 app.post('/shot',function(req,res){
@@ -72,7 +76,7 @@ app.post('/shot',function(req,res){
         board[cell.x][cell.y].state = "M";
     }
     checkForDestroyedShips();
-    updateClients();
+    reportGameStateChange();
     res.send(200);
 });
 
@@ -152,7 +156,7 @@ app.post('/reset',function(req,res){
     setBlankGrid(board);
     getShipData();
     checkForDestroyedShips();
-    updateClients();
+    reportGameStateChange();
     res.send(200);
 });
 
