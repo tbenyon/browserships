@@ -54,7 +54,7 @@ app.get('/state', function(req, res) {
     });
 });
 
-function updateClient() {
+function updateClients() {
     openConnections.forEach(function(resp) {
         var d = new Date();
         resp.write('id: ' + d.getMilliseconds() + '\n');
@@ -71,7 +71,7 @@ app.post('/shot',function(req,res){
         board[cell.x][cell.y].state = "M";
     }
     checkForDestroyedShips();
-    updateClient();
+    updateClients();
     res.send(200);
 });
 
@@ -151,7 +151,7 @@ app.post('/reset',function(req,res){
     setBlankGrid(board);
     getShipData();
     checkForDestroyedShips();
-    updateClient();
+    updateClients();
     res.send(200);
 });
 
@@ -164,7 +164,7 @@ function getGameState() {
 
 function reportClientConnectionChange(description) {
     console.log(description + ' (clients: ' + openConnections.length + ')');
-    updateClient();
+    updateClients();
 }
 
 allShipsCoords = getShipData();
