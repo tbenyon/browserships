@@ -8,6 +8,8 @@ app.use(bodyParser.json());
 
 var openConnections = [];
 var board = [];
+var shipsCoords = {};
+var statusOfShips = [];
 
 function setBlankGrid(board) {
     for (x = 0; x < 10; x++) {
@@ -61,31 +63,47 @@ setInterval(function() {
 }, 1000);
 
 app.post('/shot',function(req,res){
-    console.log(req.body);
     var cell = req.body.cell;
-
-    if (checkForShip(cell.x, cell.y)) {
+    if (checkIfShip(cell.x, cell.y)) {
         board[cell.x][cell.y].state = "H";
     }
     else {
         board[cell.x][cell.y].state = "M";
     }
+    checkForDestroyedShips();
     res.send(200);
 });
 
-function checkForShip(x, y) {
+function checkIfShip(x, y) {
+    for (boat in allShipsCoords) {
+        for (segment in allShipsCoords[boat]) {
+            if (allShipsCoords[boat][segment]["x"] === x && allShipsCoords[boat][segment]["y"] === y) {
+                allShipsCoords[boat][segment]["state"] = "inactive";
+                return true;
+            }
+        }
+    }
+}
+
+function getShipData() {
     for (var boat in shipsData.ships) {
         var direction = checkDirection();
         var addToX = direction[0];
         var addToY = direction[1];
 
+        shipsCoords[boat] = {};
+
         for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
-            if (shipsData["ships"][boat]["coord"]["x"] + addToX * i === x && shipsData["ships"][boat]["coord"]["y"] + addToY * i === y) {
-                return true;
-            }
+            shipsCoords[boat]["segment" + i] = {
+                "x": "",
+                "y": "",
+                "state": "active"
+            };
+            shipsCoords[boat]["segment" + i]["x"] = shipsData["ships"][boat]["coord"]["x"] + addToX * i;
+            shipsCoords[boat]["segment" + i]["y"] = shipsData["ships"][boat]["coord"]["y"] + addToY * i;
         }
     }
-    return false;
+    return shipsCoords;
 
     function checkDirection() {
         var addToX = 0;
@@ -99,25 +117,55 @@ function checkForShip(x, y) {
         }
 
         return [addToX, addToY];
+    }
+}
 
+function checkForDestroyedShips() {
+    statusOfShips = [];
+    var activeBoat;
+    for (boat in allShipsCoords) {
+        activeBoat = false;
+        for (segment in allShipsCoords[boat]) {
+            if (allShipsCoords[boat][segment]["state"] === "active") {
+                activeBoat = true;
+            }
+
+        }
+        var boatObj = {};
+        if (activeBoat === false) {
+            boatObj["ship"] = boat;
+            boatObj["status"] = "Destroyed";
+
+        }
+        else {
+            boatObj["ship"] = boat;
+            boatObj["status"] = "Active";
+        }
+        statusOfShips.push(boatObj);
     }
 }
 
 app.post('/reset',function(req,res){
     console.log(req.body);
     setBlankGrid(board);
+    getShipData();
+    checkForDestroyedShips();
     res.send(200);
 });
 
 function getGameState() {
     return {
-        board: board
+        "board": board,
+        "shipStatus": statusOfShips
     };
 }
 
 function reportClientConnectionChange(description) {
     console.log(description + ' (clients: ' + openConnections.length + ')');
 }
+
+allShipsCoords = getShipData();
+checkForDestroyedShips();
 
 var port = process.env.PORT || 3000;
 

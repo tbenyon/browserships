@@ -2,6 +2,8 @@ var app = angular.module('battleships', []);
 
 function boardCtrl($scope, $http) {
 
+    $scope.statusOfShips = {};
+    $scope.shipNames = ["Aircraft Carrier", "Battleship", "Submarine", "Cruiser", "Destroyer"];
     $scope.board = {};
     $scope.rowLabels = function() {
         var vals = [];
@@ -15,6 +17,8 @@ function boardCtrl($scope, $http) {
         $scope.$apply(function () {
             var boardData = JSON.parse(msg.data).board;
             $scope.board = convertBoardDataToHTMLTableViewModel(boardData);
+
+            $scope.statusOfShips = JSON.parse(msg.data).shipStatus;
         });
     };
 
@@ -22,7 +26,6 @@ function boardCtrl($scope, $http) {
     source.addEventListener('message', handleStateUpdate, false);
 
     $scope.shoot = function(x, y) {
-        console.log("function executed");
         var shotData = {
             cell: {
                 "x": x,
@@ -33,7 +36,6 @@ function boardCtrl($scope, $http) {
     };
 
     $scope.reset = function() {
-        console.log("reset executed");
         $http.post("/reset/", null);
     };
 }

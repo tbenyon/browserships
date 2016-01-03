@@ -10,9 +10,7 @@
 <body ng-app="battleships">
 <div class="container main" ng-controller="statCtrl">
     <div class="row">
-        <div class="span10 offset1" style="text-align: center">
             <h2>Welcome to Battleships</h2>
-        </div>
     </div>
     <div>
         Click on a cell to shoot!
@@ -36,6 +34,9 @@
             Click to reset the grid:
             <input type="button" ng-click="reset()" value="RESET">
         </form>
+    </div>
+    <div>
+        <p ng-repeat="ship in statusOfShips"><b>{{shipNames[$index]}}:</b> {{ship.status}}</p>
     </div>
 </div>
 
