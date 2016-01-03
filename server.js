@@ -40,6 +40,7 @@ app.get('/state', function(req, res) {
 
     openConnections.push(res);
     reportClientConnectionChange('Client connected');
+    updateClients();
 
     req.on("close", function() {
         var toRemove;
@@ -164,7 +165,6 @@ function getGameState() {
 
 function reportClientConnectionChange(description) {
     console.log(description + ' (clients: ' + openConnections.length + ')');
-    updateClients();
 }
 
 allShipsCoords = getShipData();
