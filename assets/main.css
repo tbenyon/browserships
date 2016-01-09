@@ -1,0 +1,60 @@
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    color: blue;
+    text-align: center;
+}
+
+.shootingGrid {
+    width: 90%;
+    margin: 0 auto;
+    font-family: Arial, Helvetica, sans-serif;
+    table-layout: fixed;
+    padding-bottom: 25px;
+
+}
+
+.shootingGridTable {
+    table-layout: fixed;
+    width: 95%;
+    border: 3px solid black;
+    color: white;
+    margin: 2%;
+    background-color: #0033cc;
+    height:20%;
+    text-align: center;
+}
+
+.tableBody {
+    border: 3px solid black;
+}
+
+.battleshipGridLabels {
+    color: red;
+}
+
+div.status {
+    font-family: Arial, Helvetica, sans-serif;
+    border: 3px solid black;
+    color: blue;
+    width: 200px;
+    padding-bottom: 25px;
+}
+
+div.instructions {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: blue;
+    padding-bottom: 25px;
+}
+
+@media (min-width: 800px) {
+    .shootingGrid {
+        width:66%;
+        float:left;
+    }
+
+    div.status{
+        width:33%;
+        float:right;
+    }
+}
