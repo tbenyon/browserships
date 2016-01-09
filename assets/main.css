@@ -28,6 +28,18 @@ h1 {
     border: 3px solid black;
 }
 
+td.hit {
+    background-color: red;
+}
+
+td.miss {
+    background-color: white;
+}
+
+td.unkown {
+    background-color: transparent;
+}
+
 .battleshipGridLabels {
     color: red;
     background-color: white;

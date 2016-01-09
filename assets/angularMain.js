@@ -43,7 +43,18 @@ function boardCtrl($scope, $http) {
 function convertBoardDataToHTMLTableViewModel(board) {
     return board[0].map(function(col, i) {
         return board.map(function(row) {
-            return row[i];
+            var viewModelCellState = {
+                displayClass: 'unknown'
+            };
+
+            var cellState = row[i].state;
+            if (cellState === 'H') {
+                viewModelCellState.displayClass = 'hit'
+            } else if (cellState === 'M') {
+                viewModelCellState.displayClass = 'miss'
+            }
+
+            return viewModelCellState;
         })
     });
 }

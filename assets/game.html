@@ -26,7 +26,7 @@
             <tbody>
                 <tr ng-repeat="row in board">
                     <td class="battleshipGridLabels"><b>{{rowLabels[$index]}}</b></td>
-                    <td class="tableBody" ng-repeat="cell in row" ng-click="shoot($index, $parent.$index)">{{cell.state}}</td>
+                    <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row" ng-click="shoot($index, $parent.$index)">{{cell.state}}</td>
                 </tr>
             </tbody>
         </table>
