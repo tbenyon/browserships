@@ -15,6 +15,7 @@
     </div>
 
     <div class="shootingGrid">
+        <div class="shootingGridContent">
         <table class="shootingGridTable">
             <thead>
             <tr>
@@ -30,19 +31,20 @@
                 </tr>
             </tbody>
         </table>
+            </div>
     </div>
 
     <div class="status">
+        <div class="statusContent">
         <h1>Ship Status</h1>
         <p ng-repeat="ship in statusOfShips"><b>{{shipNames[$index]}}:</b> {{ship.status}}</p>
-    </div>
 
-    <div class="instructions">
         <form>
             Click to reset the grid:
             <input type="button" ng-click="reset()" value="RESET">
         </form>
     </div>
+        </div>
 </div>
 
 </body>
