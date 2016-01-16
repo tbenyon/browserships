@@ -20,13 +20,31 @@ h1 {
 
 .shootingGridTable {
     table-layout: fixed;
-    width: 95%;
+    width: 90%;
     border: 3px solid black;
     color: white;
     margin: 2%;
     background-image: url("images/water.jpg");
     height:20%;
     text-align: center;
+}
+
+td {
+    width:30%;
+    position:relative;
+}
+
+td:after{
+    content:'';
+    display:block;
+    margin-top:100%;
+}
+td .cellContent {
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
 }
 
 .tableBody {
