@@ -22,20 +22,23 @@ function boardCtrl($scope, $http) {
 
     var generateShipImages = function(statusOfShips) {
         var shipImageData = [
-            {"activeImg": "images/ships/AircraftCarrier.png", "destroyedImg": "images/ships/AircraftCarrier Destroyed.png"},
-            {"activeImg": "images/ships/Battleship.png", "destroyedImg": "images/ships/Battleship Destroyed.png"},
-            {"activeImg": "images/ships/Submarine.png", "destroyedImg": "images/ships/Submarine Destroyed.png"},
-            {"activeImg": "images/ships/Cruiser.png", "destroyedImg": "images/ships/Cruiser Destroyed.png"},
-            {"activeImg": "images/ships/Destroyer.png", "destroyedImg": "images/ships/Destroyer Destroyed.png"}
+            {"shipId": "aircraftCarrier", "activeImg": "images/ships/AircraftCarrier.png", "destroyedImg": "images/ships/AircraftCarrier Destroyed.png"},
+            {"shipId": "battleship", "activeImg": "images/ships/Battleship.png", "destroyedImg": "images/ships/Battleship Destroyed.png"},
+            {"shipId": "submarine", "activeImg": "images/ships/Submarine.png", "destroyedImg": "images/ships/Submarine Destroyed.png"},
+            {"shipId": "cruiser", "activeImg": "images/ships/Cruiser.png", "destroyedImg": "images/ships/Cruiser Destroyed.png"},
+            {"shipId": "destroyer", "activeImg": "images/ships/Destroyer.png", "destroyedImg": "images/ships/Destroyer Destroyed.png"}
         ];
 
         var shipImagePaths = [];
         for (var i in statusOfShips) {
-            var status = statusOfShips[i].status;
-            var shipImages = shipImageData[i];
-            shipImagePaths.push({"img": status === "Active" ? shipImages.activeImg : shipImages.destroyedImg})
+            var shipState = statusOfShips[i];
+            var shipImages = shipImageData.find(function(ship) {
+                return (ship.shipId === shipState.ship);
+            });
+            var shipImage = shipState.status === "Active" ? shipImages.activeImg : shipImages.destroyedImg;
+            shipImagePaths.push({"img": shipImage})
         }
-        return shipImagePaths
+        return shipImagePaths;
     };
 
     var source = new EventSource('/state');
