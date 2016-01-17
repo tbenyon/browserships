@@ -1,9 +1,7 @@
 var app = angular.module('battleships', []);
 
 function boardCtrl($scope, $http) {
-
-    $scope.statusOfShips = {};
-    $scope.shipNames = ["Aircraft Carrier", "Battleship", "Submarine", "Cruiser", "Destroyer"];
+    $scope.frontEndShipData = [];
     $scope.board = {};
     $scope.rowLabels = function() {
         var vals = [];
@@ -15,11 +13,29 @@ function boardCtrl($scope, $http) {
 
     var handleStateUpdate = function (msg) {
         $scope.$apply(function () {
-            var boardData = JSON.parse(msg.data).board;
+            var messageData = JSON.parse(msg.data);
+            var boardData = messageData.board;
             $scope.board = convertBoardDataToHTMLTableViewModel(boardData);
-
-            $scope.statusOfShips = JSON.parse(msg.data).shipStatus;
+            $scope.frontEndShipData = generateShipImages(messageData.shipStatus);
         });
+    };
+
+    var generateShipImages = function(statusOfShips) {
+        var shipImageData = [
+            {"activeImg": "images/ships/AircraftCarrier.png", "destroyedImg": "images/ships/AircraftCarrier Destroyed.png"},
+            {"activeImg": "images/ships/Battleship.png", "destroyedImg": "images/ships/Battleship Destroyed.png"},
+            {"activeImg": "images/ships/Submarine.png", "destroyedImg": "images/ships/Submarine Destroyed.png"},
+            {"activeImg": "images/ships/Cruiser.png", "destroyedImg": "images/ships/Cruiser Destroyed.png"},
+            {"activeImg": "images/ships/Destroyer.png", "destroyedImg": "images/ships/Destroyer Destroyed.png"}
+        ];
+
+        var shipImagePaths = [];
+        for (var i in statusOfShips) {
+            var status = statusOfShips[i].status;
+            var shipImages = shipImageData[i];
+            shipImagePaths.push({"img": status === "Active" ? shipImages.activeImg : shipImages.destroyedImg})
+        }
+        return shipImagePaths
     };
 
     var source = new EventSource('/state');

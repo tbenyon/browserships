@@ -89,6 +89,11 @@ div.instructions {
     padding-bottom: 25px;
 }
 
+.scaleImage {
+    max-width: 100%;
+
+}
+
 @media (min-width: 800px) {
     .shootingGrid {
         width:66%;

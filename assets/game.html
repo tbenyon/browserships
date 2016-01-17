@@ -37,7 +37,9 @@
     <div class="status">
         <div class="statusContent">
         <h1>Ship Status</h1>
-        <p ng-repeat="ship in statusOfShips"><b>{{shipNames[$index]}}:</b> {{ship.status}}</p>
+        <div ng-repeat="ship in frontEndShipData">
+            <img class="scaleImage" ng-src={{frontEndShipData[$index]["img"]}}>
+        </div>
 
         <form>
             Click to reset the grid:
