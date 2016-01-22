@@ -25,7 +25,7 @@
             </thead>
 
             <tbody>
-                <tr ng-repeat="row in board">
+                <tr ng-repeat="row in board" class="ng-cloak">
                     <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
                     <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row" ng-click="shoot($index, $parent.$index)"><div class="cellContent">{{cell.state}}</div></td>
                 </tr>
@@ -34,7 +34,7 @@
             </div>
     </div>
 
-    <div class="status">
+    <div class="status" class="ng-cloak">
         <div class="statusContent">
         <h1>Ship Status</h1>
         <div ng-repeat="ship in frontEndShipData">
