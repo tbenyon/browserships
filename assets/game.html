@@ -37,7 +37,7 @@
     <div class="status" class="ng-cloak">
         <div class="statusContent">
             <h1>Ship Status</h1>
-            <div class="shipsContainer" ng-repeat="ship in frontEndShipData">
+            <div class="shipsContainer" ng-repeat="ship in frontEndShipData track by $index">
                 <div class="shipContainer">
                     <div class="shipElement">
                         <img class="scaleImage" class="ng-cloak" ng-src={{frontEndShipData[$index]["img"]}}>
