@@ -86,10 +86,22 @@ div.statusContent {
     margin:0 auto;
 }
 
-.shipContainer {
-    display: block;
+.shipsContainer {
     width: 100%;
-    height: 100px;
+    display: inline-block;
+    position: relative;
+}
+
+.shipContainer {
+    padding-top: 33%;
+}
+
+.shipElement {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 div.instructions {

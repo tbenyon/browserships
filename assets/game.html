@@ -16,39 +16,41 @@
 
     <div class="shootingGrid">
         <div class="shootingGridContent">
-        <table class="shootingGridTable">
-            <thead>
-            <tr>
-                <th></th>
-                <th class="battleshipGridLabels" ng-repeat="colHeader in board[0]">{{$index + 1}}</th>
-            </tr>
-            </thead>
+            <table class="shootingGridTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="battleshipGridLabels" ng-repeat="colHeader in board[0]">{{$index + 1}}</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-                <tr ng-repeat="row in board">
-                    <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
-                    <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row"  class="ng-cloak" ng-click="shoot($index, $parent.$index)"><div class="cellContent">{{cell.state}}</div></td>
-                </tr>
-            </tbody>
-        </table>
-            </div>
+                <tbody>
+                    <tr ng-repeat="row in board">
+                        <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
+                        <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row"  class="ng-cloak" ng-click="shoot($index, $parent.$index)"><div class="cellContent">{{cell.state}}</div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="status" class="ng-cloak">
         <div class="statusContent">
-        <h1>Ship Status</h1>
-        <div ng-repeat="ship in frontEndShipData">
-            <div class="shipContainer">
-                <img class="scaleImage" class="ng-cloak" ng-src={{frontEndShipData[$index]["img"]}}>
+            <h1>Ship Status</h1>
+            <div class="shipsContainer" ng-repeat="ship in frontEndShipData">
+                <div class="shipContainer">
+                    <div class="shipElement">
+                        <img class="scaleImage" class="ng-cloak" ng-src={{frontEndShipData[$index]["img"]}}>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <form>
-            Click to reset the grid:
-            <input type="button" ng-click="reset()" value="RESET">
-        </form>
-    </div>
+            <form>
+                Click to reset the grid:
+                <input type="button" ng-click="reset()" value="RESET">
+            </form>
         </div>
+    </div>
 </div>
 
 </body>
