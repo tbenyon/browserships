@@ -1,13 +1,14 @@
 var app = angular.module('battleships', []);
 
+var shipImageData = [
+    {"shipId": "aircraftCarrier", "activeImg": "images/ships/AircraftCarrier.png", "destroyedImg": "images/ships/AircraftCarrier Destroyed.png"},
+    {"shipId": "battleship", "activeImg": "images/ships/Battleship.png", "destroyedImg": "images/ships/Battleship Destroyed.png"},
+    {"shipId": "submarine", "activeImg": "images/ships/Submarine.png", "destroyedImg": "images/ships/Submarine Destroyed.png"},
+    {"shipId": "cruiser", "activeImg": "images/ships/Cruiser.png", "destroyedImg": "images/ships/Cruiser Destroyed.png"},
+    {"shipId": "destroyer", "activeImg": "images/ships/Destroyer.png", "destroyedImg": "images/ships/Destroyer Destroyed.png"}
+];
+
 var preloadImages = function() {
-    var shipImageData = [
-        {"shipId": "aircraftCarrier", "activeImg": "images/ships/AircraftCarrier.png", "destroyedImg": "images/ships/AircraftCarrier Destroyed.png"},
-        {"shipId": "battleship", "activeImg": "images/ships/Battleship.png", "destroyedImg": "images/ships/Battleship Destroyed.png"},
-        {"shipId": "submarine", "activeImg": "images/ships/Submarine.png", "destroyedImg": "images/ships/Submarine Destroyed.png"},
-        {"shipId": "cruiser", "activeImg": "images/ships/Cruiser.png", "destroyedImg": "images/ships/Cruiser Destroyed.png"},
-        {"shipId": "destroyer", "activeImg": "images/ships/Destroyer.png", "destroyedImg": "images/ships/Destroyer Destroyed.png"}
-    ];
 
     preloadImage("images/hit.png");
     preloadImage("images/miss.png");
@@ -48,13 +49,6 @@ function boardCtrl($scope, $http) {
     };
 
     var generateShipImages = function(statusOfShips) {
-        var shipImageData = [
-            {"shipId": "aircraftCarrier", "activeImg": "images/ships/AircraftCarrier.png", "destroyedImg": "images/ships/AircraftCarrier Destroyed.png"},
-            {"shipId": "battleship", "activeImg": "images/ships/Battleship.png", "destroyedImg": "images/ships/Battleship Destroyed.png"},
-            {"shipId": "submarine", "activeImg": "images/ships/Submarine.png", "destroyedImg": "images/ships/Submarine Destroyed.png"},
-            {"shipId": "cruiser", "activeImg": "images/ships/Cruiser.png", "destroyedImg": "images/ships/Cruiser Destroyed.png"},
-            {"shipId": "destroyer", "activeImg": "images/ships/Destroyer.png", "destroyedImg": "images/ships/Destroyer Destroyed.png"}
-        ];
 
         var shipImagePaths = [];
         for (var i in statusOfShips) {
@@ -107,4 +101,4 @@ function convertBoardDataToHTMLTableViewModel(board) {
 
 app.controller("statCtrl", ["$scope","$http", boardCtrl]);
 
-preloadImages();
+preloadImages(shipImageData);
