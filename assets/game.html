@@ -25,9 +25,9 @@
             </thead>
 
             <tbody>
-                <tr ng-repeat="row in board" class="ng-cloak">
+                <tr ng-repeat="row in board">
                     <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
-                    <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row" ng-click="shoot($index, $parent.$index)"><div class="cellContent">{{cell.state}}</div></td>
+                    <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row"  class="ng-cloak" ng-click="shoot($index, $parent.$index)"><div class="cellContent">{{cell.state}}</div></td>
                 </tr>
             </tbody>
         </table>
@@ -38,7 +38,9 @@
         <div class="statusContent">
         <h1>Ship Status</h1>
         <div ng-repeat="ship in frontEndShipData">
-            <img class="scaleImage" ng-src={{frontEndShipData[$index]["img"]}}>
+            <div class="shipContainer">
+                <img class="scaleImage" class="ng-cloak" ng-src={{frontEndShipData[$index]["img"]}}>
+            </div>
         </div>
 
         <form>
