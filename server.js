@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var shipsData = require('./ships.json');
+var gameModule = require('./gameModule.js');
 var app = express();
 
 app.use(express.static('assets'));
@@ -11,17 +12,7 @@ var board = [];
 var allShipsCoords = {};
 var statusOfShips = [];
 
-function setBlankGrid(board) {
-    for (x = 0; x < 10; x++) {
-        board[x] = [];
-        for (y = 0; y < 10; y++) {
-            board[x][y] = {
-                state: "O"
-            }
-        }
-    }
-}
-setBlankGrid(board);
+gameModule.setBlankGrid(board);
 
 app.get('/', function(req, res) {
     res.sendfile('assets/game.html');
@@ -203,7 +194,7 @@ function checkForDestroyedShips() {
 }
 
 app.post('/reset',function(req,res) {
-    setBlankGrid(board);
+    gameModule.setBlankGrid(board);
     generateRandomShipsPositions();
     checkForDestroyedShips();
     reportGameStateChange();
