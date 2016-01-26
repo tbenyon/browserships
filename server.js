@@ -59,7 +59,7 @@ function reportGameStateToClient(connection) {
 
 app.post('/shot',function(req,res){
     var cell = req.body.cell;
-    if (checkIfShip(cell.x, cell.y)) {
+    if (gameModule.checkIfShip(cell.x, cell.y, allShipsCoords)) {
         board[cell.x][cell.y].state = "H";
     }
     else {
@@ -69,17 +69,6 @@ app.post('/shot',function(req,res){
     reportGameStateChange();
     res.send(200);
 });
-
-function checkIfShip(x, y) {
-    for (boat in allShipsCoords) {
-        for (segment in allShipsCoords[boat]) {
-            if (allShipsCoords[boat][segment]["x"] === x && allShipsCoords[boat][segment]["y"] === y) {
-                allShipsCoords[boat][segment]["state"] = "inactive";
-                return true;
-            }
-        }
-    }
-}
 
 function generateRandomShipsPositions() {
     allShipsCoords = {};
