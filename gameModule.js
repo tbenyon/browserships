@@ -23,6 +23,32 @@ exports.checkIfShip = function(x, y, allShipsCoords) {
     }
 };
 
+exports.checkForDestroyedShips = function(allShipsCoords) {
+    var statusOfShips = [];
+    var activeBoat;
+    for (var boat in allShipsCoords) {
+        activeBoat = false;
+        for (var segment in allShipsCoords[boat]) {
+            if (allShipsCoords[boat][segment]["state"] === "active") {
+                activeBoat = true;
+            }
+
+        }
+        var boatObj = {};
+        if (activeBoat === false) {
+            boatObj["ship"] = boat;
+            boatObj["status"] = "Destroyed";
+
+        }
+        else {
+            boatObj["ship"] = boat;
+            boatObj["status"] = "Active";
+        }
+        statusOfShips.push(boatObj);
+    }
+    return statusOfShips;
+};
+
 exports.generateRandomShipsPositions = function() {
     var allShipsCoords = {};
     for (var boat in shipsData.ships) {

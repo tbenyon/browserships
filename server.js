@@ -9,7 +9,6 @@ app.use(bodyParser.json());
 var openConnections = [];
 var board = [];
 var allShipsCoords = {};
-var statusOfShips = [];
 
 gameModule.setBlankGrid(board);
 
@@ -64,40 +63,13 @@ app.post('/shot',function(req,res){
     else {
         board[cell.x][cell.y].state = "M";
     }
-    checkForDestroyedShips();
     reportGameStateChange();
     res.send(200);
 });
 
-function checkForDestroyedShips() {
-    statusOfShips.length = 0;
-    var activeBoat;
-    for (boat in allShipsCoords) {
-        activeBoat = false;
-        for (segment in allShipsCoords[boat]) {
-            if (allShipsCoords[boat][segment]["state"] === "active") {
-                activeBoat = true;
-            }
-
-        }
-        var boatObj = {};
-        if (activeBoat === false) {
-            boatObj["ship"] = boat;
-            boatObj["status"] = "Destroyed";
-
-        }
-        else {
-            boatObj["ship"] = boat;
-            boatObj["status"] = "Active";
-        }
-        statusOfShips.push(boatObj);
-    }
-}
-
 app.post('/reset',function(req,res) {
     gameModule.setBlankGrid(board);
     allShipsCoords = gameModule.generateRandomShipsPositions();
-    checkForDestroyedShips();
     reportGameStateChange();
     res.send(200);
 });
@@ -105,7 +77,7 @@ app.post('/reset',function(req,res) {
 function getGameState() {
     return {
         "board": board,
-        "shipStatus": statusOfShips
+        "shipStatus": gameModule.checkForDestroyedShips(allShipsCoords)
     };
 }
 
@@ -114,7 +86,6 @@ function reportClientConnectionChange(description) {
 }
 
 allShipsCoords = gameModule.generateRandomShipsPositions();
-checkForDestroyedShips();
 
 var port = process.env.PORT || 3000;
 
