@@ -1,5 +1,12 @@
 var shipsData = require('./ships.json');
 
+exports.getGameState = function(board, allShipsCoords) {
+    return {
+        "board": board,
+        "shipStatus": checkForDestroyedShips(allShipsCoords)
+    };
+};
+
 exports.setBlankGrid = function(board) {
         for (x = 0; x < 10; x++) {
             board[x] = [];
@@ -23,7 +30,7 @@ exports.checkIfShip = function(x, y, allShipsCoords) {
     }
 };
 
-exports.checkForDestroyedShips = function(allShipsCoords) {
+checkForDestroyedShips = function(allShipsCoords) {
     var statusOfShips = [];
     var activeBoat;
     for (var boat in allShipsCoords) {

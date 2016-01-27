@@ -52,7 +52,7 @@ function reportGameStateChange() {
 function reportGameStateToClient(connection) {
     var d = new Date();
     connection.write('id: ' + d.getMilliseconds() + '\n');
-    connection.write('data:' + JSON.stringify(getGameState()) +   '\n\n');
+    connection.write('data:' + JSON.stringify(gameModule.getGameState(board, allShipsCoords)) +   '\n\n');
 }
 
 app.post('/shot',function(req,res){
@@ -73,13 +73,6 @@ app.post('/reset',function(req,res) {
     reportGameStateChange();
     res.send(200);
 });
-
-function getGameState() {
-    return {
-        "board": board,
-        "shipStatus": gameModule.checkForDestroyedShips(allShipsCoords)
-    };
-}
 
 function reportClientConnectionChange(description) {
     console.log(description + ' (clients: ' + openConnections.length + ')');
