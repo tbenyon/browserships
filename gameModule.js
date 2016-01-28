@@ -1,5 +1,12 @@
 var shipsData = require('./ships.json');
 
+exports.createGame = function() {
+    return {
+        'board': setBlankGrid(),
+        'allShipsCoords': generateRandomShipsPositions()
+    };
+};
+
 exports.getGameState = function(board, allShipsCoords) {
     return {
         "board": board,
@@ -7,17 +14,18 @@ exports.getGameState = function(board, allShipsCoords) {
     };
 };
 
-exports.setBlankGrid = function(board) {
-        for (x = 0; x < 10; x++) {
-            board[x] = [];
-            for (y = 0; y < 10; y++) {
-                board[x][y] = {
-                    state: "O"
-                }
+setBlankGrid = function() {
+    var board = [];
+    for (var x = 0; x < 10; x++) {
+        board[x] = [];
+        for (var y = 0; y < 10; y++) {
+            board[x][y] = {
+                state: "O"
             }
         }
-    //return board;
-    };
+    }
+    return board;
+};
 
 exports.checkIfShip = function(x, y, allShipsCoords) {
     for (boat in allShipsCoords) {
@@ -56,7 +64,7 @@ checkForDestroyedShips = function(allShipsCoords) {
     return statusOfShips;
 };
 
-exports.generateRandomShipsPositions = function() {
+generateRandomShipsPositions = function() {
     var allShipsCoords = {};
     for (var boat in shipsData.ships) {
         allShipsCoords[boat] = {};

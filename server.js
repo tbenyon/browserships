@@ -6,11 +6,10 @@ var app = express();
 app.use(express.static('assets'));
 app.use(bodyParser.json());
 
+var  games = [];
+games.push(gameModule.createGame());
 var openConnections = [];
-var board = [];
-var allShipsCoords = {};
 
-gameModule.setBlankGrid(board);
 
 app.get('/', function(req, res) {
     res.sendfile('assets/game.html');
@@ -52,24 +51,24 @@ function reportGameStateChange() {
 function reportGameStateToClient(connection) {
     var d = new Date();
     connection.write('id: ' + d.getMilliseconds() + '\n');
-    connection.write('data:' + JSON.stringify(gameModule.getGameState(board, allShipsCoords)) +   '\n\n');
+    connection.write('data:' + JSON.stringify(gameModule.getGameState(games[0].board, games[0].allShipsCoords)) +   '\n\n');
 }
 
 app.post('/shot',function(req,res){
     var cell = req.body.cell;
-    if (gameModule.checkIfShip(cell.x, cell.y, allShipsCoords)) {
-        board[cell.x][cell.y].state = "H";
+    if (gameModule.checkIfShip(cell.x, cell.y, games[0].allShipsCoords)) {
+        games[0].board[cell.x][cell.y].state = "H";
     }
     else {
-        board[cell.x][cell.y].state = "M";
+        games[0].board[cell.x][cell.y].state = "M";
     }
     reportGameStateChange();
     res.send(200);
 });
 
 app.post('/reset',function(req,res) {
-    gameModule.setBlankGrid(board);
-    allShipsCoords = gameModule.generateRandomShipsPositions();
+    gameModule.setBlankGrid(games[0].board);
+    games[0].allShipsCoords = gameModule.generateRandomShipsPositions();
     reportGameStateChange();
     res.send(200);
 });
@@ -77,8 +76,6 @@ app.post('/reset',function(req,res) {
 function reportClientConnectionChange(description) {
     console.log(description + ' (clients: ' + openConnections.length + ')');
 }
-
-allShipsCoords = gameModule.generateRandomShipsPositions();
 
 var port = process.env.PORT || 3000;
 
