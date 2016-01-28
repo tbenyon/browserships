@@ -78,8 +78,9 @@ app.post('/shot',function(req,res){
 });
 
 app.post('/reset',function(req,res) {
-    gameModule.setBlankGrid(games[0].board);
-    games[0].allShipsCoords = gameModule.generateRandomShipsPositions();
+    var newGameData = gameModule.createGame();
+    games[0].board = newGameData.board;
+    games[0].allShipsCoords = newGameData.allShipsCoords;
     reportGameStateChange();
     res.send(200);
 });
