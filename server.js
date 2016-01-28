@@ -1,10 +1,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var gameModule = require('./gameModule.js');
+var cookieParser = require('cookie-parser');
 var app = express();
 
 app.use(express.static('assets'));
 app.use(bodyParser.json());
+app.use(cookieParser("secret messagessdf"));
 
 var  games = [];
 games.push(gameModule.createGame());
@@ -16,7 +18,16 @@ app.get('/', function(req, res) {
 });
 
 app.get('/state', function(req, res) {
-    req.socket.setTimeout(60000);
+    console.log("Cookies: ", req.cookies);
+    if (req.cookies['beenBefore'] == 'yes') {
+        console.log("Played before! Player ID = " + req.cookies['playersID']);
+    } else {
+        var playerID = Math.floor(Math.random() * 1000);
+        res.cookie("beenBefore", 'yes', {maxAge: 1000 * 60 * 60 * 24});
+        res.cookie("playersID", playerID, {maxAge: 1000 * 60 * 60 * 24});
+        console.log("New player! Player ID = " + playerID);
+    }
+        req.socket.setTimeout(60000);
 
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
