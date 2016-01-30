@@ -9,25 +9,30 @@ app.use(bodyParser.json());
 app.use(cookieParser("secret messagessdf"));
 
 var  games = [];
-games.push(gameModule.createGame());
 var openConnections = [];
-
 
 app.get('/', function(req, res) {
     res.sendfile('assets/game.html');
 });
 
 app.get('/state', function(req, res) {
+    req.socket.setTimeout(60000);
     console.log("Cookies: ", req.cookies);
     if (req.cookies['beenBefore'] == 'yes') {
-        console.log("Played before! Player ID = " + req.cookies['playersID']);
+        playerID = req.cookies['playersID'];
+        console.log("Played before! Player ID = " + playerID);
     } else {
         var playerID = Math.floor(Math.random() * 1000);
         res.cookie("beenBefore", 'yes', {maxAge: 1000 * 60 * 60 * 24});
         res.cookie("playersID", playerID, {maxAge: 1000 * 60 * 60 * 24});
         console.log("New player! Player ID = " + playerID);
     }
-        req.socket.setTimeout(60000);
+
+    var gameIndex = gameModule.checkForLiveGame(playerID, games);
+    if (gameIndex === false) {
+        gameIndex = games.length - 1;
+        games.push(gameModule.createGame(playerID));
+    }
 
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
