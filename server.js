@@ -17,7 +17,6 @@ app.get('/', function(req, res) {
 
 app.get('/state', function(req, res) {
     req.socket.setTimeout(60000);
-    console.log("Cookies: ", req.cookies);
     if (req.cookies['beenBefore'] == 'yes') {
         playerID = req.cookies['playersID'];
         console.log("Played before! Player ID = " + playerID);
@@ -28,10 +27,10 @@ app.get('/state', function(req, res) {
         console.log("New player! Player ID = " + playerID);
     }
 
-    var gameIndex = gameModule.checkForLiveGame(playerID, games);
+    var gameIndex = gameModule.findGameIndex(playerID, games);
     if (gameIndex === false) {
-        gameIndex = games.length - 1;
         games.push(gameModule.createGame(playerID));
+        gameIndex = games.length - 1;
     }
 
     res.writeHead(200, {
@@ -41,9 +40,9 @@ app.get('/state', function(req, res) {
     });
     res.write('\n');
 
-    openConnections.push(res);
+    openConnections.push({'playerID': playerID, 'response': res});
     reportClientConnectionChange('Client connected');
-    reportGameStateToClient(res);
+    reportGameStateToClient(playerID, gameIndex);
 
     req.on("close", function() {
         var toRemove;
@@ -58,35 +57,38 @@ app.get('/state', function(req, res) {
     });
 });
 
-function reportGameStateChange() {
-    openConnections.forEach(function(connection) {
-        reportGameStateToClient(connection);
-    });
-}
-
-function reportGameStateToClient(connection) {
+function reportGameStateToClient(playerID, gameIndex) {
     var d = new Date();
-    connection.write('id: ' + d.getMilliseconds() + '\n');
-    connection.write('data:' + JSON.stringify(gameModule.getGameState(games[0].board, games[0].allShipsCoords)) +   '\n\n');
+    for (var connectionIndex in openConnections) {
+        if (openConnections[connectionIndex].playerID === playerID) {
+            openConnections[connectionIndex].response.write('id: ' + d.getMilliseconds() + '\n');
+            openConnections[connectionIndex].response.write('data:' + JSON.stringify(gameModule.getGameState(games[gameIndex].board, games[gameIndex].allShipsCoords)) +   '\n\n');
+        }
+    }
+
 }
 
 app.post('/shot',function(req,res){
     var cell = req.body.cell;
-    if (gameModule.checkIfShip(cell.x, cell.y, games[0].allShipsCoords)) {
-        games[0].board[cell.x][cell.y].state = "H";
+    var playerID = req.cookies['playersID'];
+    var gameIndex = gameModule.findGameIndex(playerID, games);
+    if (gameModule.checkIfShip(cell.x, cell.y, games[gameIndex].allShipsCoords)) {
+        games[gameIndex].board[cell.x][cell.y].state = "H";
     }
     else {
-        games[0].board[cell.x][cell.y].state = "M";
+        games[gameIndex].board[cell.x][cell.y].state = "M";
     }
-    reportGameStateChange();
+    reportGameStateToClient(playerID, gameIndex);
     res.send(200);
 });
 
 app.post('/reset',function(req,res) {
     var newGameData = gameModule.createGame();
-    games[0].board = newGameData.board;
-    games[0].allShipsCoords = newGameData.allShipsCoords;
-    reportGameStateChange();
+    var playerID = req.cookies['playersID'];
+    var gameIndex = gameModule.findGameIndex(playerID, games);
+    games[gameIndex].board = newGameData.board;
+    games[gameIndex].allShipsCoords = newGameData.allShipsCoords;
+    reportGameStateToClient(playerID, gameIndex);
     res.send(200);
 });
 

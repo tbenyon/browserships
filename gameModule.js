@@ -15,14 +15,12 @@ exports.getGameState = function(board, allShipsCoords) {
     };
 };
 
-exports.checkForLiveGame = function(playerID, games) {
+exports.findGameIndex = function(playerID, games) {
     for (var game in games) {
         if (games[game].playerID === playerID) {
-            console.log("Game Index " + game + " FOUND for playerID: " + playerID + "/n");
             return game
         }
     }
-    console.log("Game Index " + game + " CREATED for playerID: " + playerID + "/n");
     return false;
 };
 
