@@ -12,21 +12,19 @@ var  games = [];
 var openConnections = [];
 
 app.get('/', function(req, res) {
+    console.log("Get made to root!DKDSNFJKDSNFJDSNFKASBFKJASBDNK" + req.cookies['beenBefore']);
+    if (req.cookies['playersID'] === undefined) {
+        var playerID = Math.floor(Math.random() * 1000);
+        res.cookie("playersID", playerID, {maxAge: 1000 * 60 * 60 * 24});
+    }
     res.sendfile('assets/game.html');
 });
 
 app.get('/state', function(req, res) {
     req.socket.setTimeout(60000);
-    if (req.cookies['beenBefore'] == 'yes') {
-        playerID = req.cookies['playersID'];
-        console.log("Played before! Player ID = " + playerID);
-    } else {
-        var playerID = Math.floor(Math.random() * 1000);
-        res.cookie("beenBefore", 'yes', {maxAge: 1000 * 60 * 60 * 24});
-        res.cookie("playersID", playerID, {maxAge: 1000 * 60 * 60 * 24});
-        console.log("New player! Player ID = " + playerID);
-    }
 
+    var playerID = req.cookies['playersID'];
+    console.log("PLAYER ID = " + req.cookies['playersID']);
     var gameIndex = gameModule.findGameIndex(playerID, games);
     if (gameIndex === false) {
         games.push(gameModule.createGame(playerID));
