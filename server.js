@@ -8,28 +8,26 @@ app.use(express.static('assets'));
 app.use(bodyParser.json());
 app.use(cookieParser("secret messagessdf"));
 
-var  games = [];
+var games = [];
 var openConnections = [];
 
 app.get('/', function(req, res) {
-    console.log("Get made to root!DKDSNFJKDSNFJDSNFKASBFKJASBDNK" + req.cookies['beenBefore']);
     if (req.cookies['playersID'] === undefined) {
-        var playerID = Math.floor(Math.random() * 1000);
+        var playerID = Math.floor(Math.random() * 1000).toString();
         res.cookie("playersID", playerID, {maxAge: 1000 * 60 * 60 * 24});
+    } else {
+        var playerID = req.cookies['playersID'];
+    }
+    var gameIndex = gameModule.findGameIndex(playerID, games);
+    if (gameIndex === false) {
+        console.log("creating game");
+        games.push(gameModule.createGame(playerID));
     }
     res.sendfile('assets/game.html');
 });
 
 app.get('/state', function(req, res) {
     req.socket.setTimeout(60000);
-
-    var playerID = req.cookies['playersID'];
-    console.log("PLAYER ID = " + req.cookies['playersID']);
-    var gameIndex = gameModule.findGameIndex(playerID, games);
-    if (gameIndex === false) {
-        games.push(gameModule.createGame(playerID));
-        gameIndex = games.length - 1;
-    }
 
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
@@ -38,6 +36,8 @@ app.get('/state', function(req, res) {
     });
     res.write('\n');
 
+    var playerID = req.cookies['playersID'];
+    var gameIndex = gameModule.findGameIndex(playerID, games);
     openConnections.push({'playerID': playerID, 'response': res});
     reportClientConnectionChange('Client connected');
     reportGameStateToClient(playerID, gameIndex);
@@ -57,10 +57,11 @@ app.get('/state', function(req, res) {
 
 function reportGameStateToClient(playerID, gameIndex) {
     var d = new Date();
+    var game = games[gameIndex];
     for (var connectionIndex in openConnections) {
         if (openConnections[connectionIndex].playerID === playerID) {
             openConnections[connectionIndex].response.write('id: ' + d.getMilliseconds() + '\n');
-            openConnections[connectionIndex].response.write('data:' + JSON.stringify(gameModule.getGameState(games[gameIndex].board, games[gameIndex].allShipsCoords)) +   '\n\n');
+            openConnections[connectionIndex].response.write('data:' + JSON.stringify(gameModule.getGameState(game.board, game.allShipsCoords)) + '\n\n');
         }
     }
 
