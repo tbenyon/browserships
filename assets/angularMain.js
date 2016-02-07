@@ -62,7 +62,7 @@ function boardCtrl($scope, $http) {
         return shipImagePaths;
     };
 
-    var source = new EventSource('/state');
+    var source = new EventSource(window.location.pathname + '/state');
     source.addEventListener('message', handleStateUpdate, false);
 
     $scope.shoot = function(x, y) {
@@ -72,11 +72,11 @@ function boardCtrl($scope, $http) {
                 "y": y
             }
         };
-        $http.post("/shot/", shotData);
+        $http.post(window.location.pathname + "/shot/", shotData);
     };
 
     $scope.reset = function() {
-        $http.post("/reset/", null);
+        $http.post(window.location.pathname + "/reset/", null);
     };
 }
 

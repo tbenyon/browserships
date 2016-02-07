@@ -31,7 +31,7 @@ app.get('/games/:id', function(req, res) {
     res.sendfile('assets/game.html');
 });
 
-app.get('/state', function(req, res) {
+app.get('/games/:id/state', function(req, res) {
     req.socket.setTimeout(60000);
 
     res.writeHead(200, {
@@ -42,7 +42,7 @@ app.get('/state', function(req, res) {
     res.write('\n');
 
     var playerID = req.cookies['playersID'];
-    var gameIndex = gameModule.findGameIndex(playerID, games);
+    var gameIndex = req.params.id;
     openConnections.push({'playerID': playerID, 'response': res});
     reportClientConnectionChange('Client connected');
     reportGameStateToClient(playerID, gameIndex);
@@ -72,10 +72,10 @@ function reportGameStateToClient(playerID, gameIndex) {
 
 }
 
-app.post('/shot',function(req,res){
+app.post('/games/:id/shot',function(req,res){
     var cell = req.body.cell;
     var playerID = req.cookies['playersID'];
-    var gameIndex = gameModule.findGameIndex(playerID, games);
+    var gameIndex = req.params.id;
     if (gameModule.checkIfShip(cell.x, cell.y, games[gameIndex].allShipsCoords)) {
         games[gameIndex].board[cell.x][cell.y].state = "H";
     }
@@ -86,10 +86,10 @@ app.post('/shot',function(req,res){
     res.send(200);
 });
 
-app.post('/reset',function(req,res) {
+app.post('/games/:id/reset',function(req,res) {
     var newGameData = gameModule.createGame();
     var playerID = req.cookies['playersID'];
-    var gameIndex = gameModule.findGameIndex(playerID, games);
+    var gameIndex = req.params.id;
     games[gameIndex].board = newGameData.board;
     games[gameIndex].allShipsCoords = newGameData.allShipsCoords;
     reportGameStateToClient(playerID, gameIndex);
