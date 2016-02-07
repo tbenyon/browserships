@@ -20,9 +20,14 @@ app.get('/', function(req, res) {
     }
     var gameIndex = gameModule.findGameIndex(playerID, games);
     if (gameIndex === false) {
-        console.log("creating game");
-        games.push(gameModule.createGame(playerID));
+        var game = gameModule.createGame(playerID);
+        games.push(game);
+        gameIndex = games.length - 1;
     }
+    res.redirect(303, '/games/' + gameIndex);
+});
+
+app.get('/games/:id', function(req, res) {
     res.sendfile('assets/game.html');
 });
 
