@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var gameModule = require('./gameModule.js');
 var cookieParser = require('cookie-parser');
+var guid = require('guid');
 var app = express();
 
 app.use(express.static('assets'));
@@ -13,7 +14,7 @@ var openConnections = [];
 
 app.get('/', function(req, res) {
     if (req.cookies['playersID'] === undefined) {
-        var playerID = Math.floor(Math.random() * 1000).toString();
+        var playerID = guid.raw();
         res.cookie("playersID", playerID, {maxAge: 1000 * 60 * 60 * 24});
     } else {
         var playerID = req.cookies['playersID'];
