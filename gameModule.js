@@ -1,10 +1,11 @@
 var shipsData = require('./ships.json');
 
-exports.createGame = function(playerID) {
+exports.createGame = function(playerID, gameID) {
     return {
         'board': setBlankGrid(),
         'allShipsCoords': generateRandomShipsPositions(),
-        'playerID': playerID
+        'playerID': playerID,
+        'gameID': gameID
     };
 };
 
@@ -15,10 +16,19 @@ exports.getGameState = function(board, allShipsCoords) {
     };
 };
 
-exports.findGameIndex = function(playerID, games) {
+exports.findGameID = function(playerID, games) {
     for (var game in games) {
         if (games[game].playerID === playerID) {
-            return game
+            return games[game].gameID;
+        }
+    }
+    return false;
+};
+
+exports.findGame = function(games, gameID) {
+    for (var game in games) {
+        if (games[game].gameID === gameID) {
+            return games[game];
         }
     }
     return false;
