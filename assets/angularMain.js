@@ -29,8 +29,12 @@ var preloadImages = function() {
 };
 
 function boardCtrl($scope, $http) {
-    $scope.frontEndShipData = [];
-    $scope.board = {};
+    $scope.playerShotData = [];
+    $scope.playerShipPositions = {};
+    $scope.playerShipStatus = [];
+    $scope.computerShotData = [];
+    $scope.computerShipStatus = [];
+
     $scope.rowLabels = function() {
         var vals = [];
         for(var i = 0; i < 26; i++) {
@@ -42,9 +46,13 @@ function boardCtrl($scope, $http) {
     var handleStateUpdate = function (msg) {
         $scope.$apply(function () {
             var messageData = JSON.parse(msg.data);
-            var boardData = messageData.board;
-            $scope.board = convertBoardDataToHTMLTableViewModel(boardData);
-            $scope.frontEndShipData = generateShipImages(messageData.shipStatus);
+            var playerBoardData = messageData.playerShotData;
+            $scope.playerShotData = convertBoardDataToHTMLTableViewModel(playerBoardData);
+            $scope.playerShipPositions = messageData.playerShipPositions;
+            $scope.playerShipStatus = messageData.playerShipStatus;
+            var computerBoardData = messageData.computerShotData;
+            $scope.computerShotData = convertBoardDataToHTMLTableViewModel(computerBoardData);
+            $scope.computerShipStatus = generateShipImages(messageData.computerShipStatus);
         });
     };
 

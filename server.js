@@ -21,9 +21,7 @@ app.get('/', function(req, res) {
     }
     var gameID = gameModule.findGameID(playerID, games);
     if (gameID === false) {
-        console.log("no games at root");
         var game = gameModule.createGame(playerID, guid.raw());
-        console.log("created this game: "+ game);
         games.push(game);
     } else {
         var game = gameModule.findGame(games, gameID);
@@ -70,7 +68,7 @@ function reportGameStateToClient(playerID, gameID) {
     for (var connectionIndex in openConnections) {
         if (openConnections[connectionIndex].playerID === playerID) {
             openConnections[connectionIndex].response.write('id: ' + d.getMilliseconds() + '\n');
-            openConnections[connectionIndex].response.write('data:' + JSON.stringify(gameModule.getGameState(game.board, game.allShipsCoords)) + '\n\n');
+            openConnections[connectionIndex].response.write('data:' + JSON.stringify(gameModule.getGameState(game)) + '\n\n');
         }
     }
 }
@@ -80,11 +78,11 @@ app.post('/games/:id/shot',function(req,res){
     var playerID = req.cookies['playersID'];
     var gameID = req.params.id;
     var game = gameModule.findGame(games, gameID);
-    if (gameModule.checkIfShip(cell.x, cell.y, game.allShipsCoords)) {
-        game.board[cell.x][cell.y].state = "H";
+    if (gameModule.checkIfShip(cell.x, cell.y, game.computerShipPositions)) {
+        game.playerShotData[cell.x][cell.y].state = "H";
     }
     else {
-        game.board[cell.x][cell.y].state = "M";
+        game.playerShotData[cell.x][cell.y].state = "M";
     }
     reportGameStateToClient(playerID, gameID);
     res.send(200);
@@ -95,8 +93,11 @@ app.post('/games/:id/reset',function(req,res) {
     var playerID = req.cookies['playersID'];
     var gameID = req.params.id;
     var game = gameModule.findGame(games, gameID);
-    game.board = newGameData.board;
-    game.allShipsCoords = newGameData.allShipsCoords;
+    game.playerShotData = newGameData.playerShotData;
+    game.playerShipPositions = newGameData.playerShipPositions;
+    game.computerShotData = newGameData.computerShotData;
+    game.computerShipPositions = newGameData.computerShipPositions;
+
     reportGameStateToClient(playerID, gameID);
     res.send(200);
 });

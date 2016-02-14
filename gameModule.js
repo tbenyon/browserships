@@ -2,17 +2,24 @@ var shipsData = require('./ships.json');
 
 exports.createGame = function(playerID, gameID) {
     return {
-        'board': setBlankGrid(),
-        'allShipsCoords': generateRandomShipsPositions(),
+        'playerShotData': setBlankGrid(),
+        'playerShipPositions': generateRandomShipsPositions(),
+
+        'computerShotData': setBlankGrid(),
+        'computerShipPositions': generateRandomShipsPositions(),
+
         'playerID': playerID,
         'gameID': gameID
     };
 };
 
-exports.getGameState = function(board, allShipsCoords) {
+exports.getGameState = function(game) {
     return {
-        "board": board,
-        "shipStatus": checkForDestroyedShips(allShipsCoords)
+        'playerShotData': game.playerShotData,
+        'playerShipStatus': checkForDestroyedShips(game.playerShipPositions),
+        'computerShipStatus': checkForDestroyedShips(game.computerShipPositions),
+        'computerShotData': game.computerShotData,
+        'playerShipPositions': game.playerShipPositions
     };
 };
 

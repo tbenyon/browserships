@@ -20,12 +20,12 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th class="battleshipGridLabels" ng-repeat="colHeader in board[0]">{{$index + 1}}</th>
+                        <th class="battleshipGridLabels" ng-repeat="colHeader in playerShotData[0]">{{$index + 1}}</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr ng-repeat="row in board">
+                    <tr ng-repeat="row in playerShotData">
                         <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
                         <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row"  class="ng-cloak" ng-click="shoot($index, $parent.$index)"><div class="cellContent">{{cell.state}}</div></td>
                     </tr>
@@ -36,21 +36,55 @@
 
     <div class="status" class="ng-cloak">
         <div class="statusContent">
-            <h1>Ship Status</h1>
-            <div class="shipsContainer" ng-repeat="ship in frontEndShipData track by $index">
+            <h1>Enemy Ships</h1>
+            <div class="shipsContainer" ng-repeat="ship in computerShipStatus track by $index">
                 <div class="shipContainer">
                     <div class="shipElement">
-                        <img class="scaleImage" class="ng-cloak" ng-src={{frontEndShipData[$index]["img"]}}>
+                        <img class="scaleImage" class="ng-cloak" ng-src='{{computerShipStatus[$index]["img"]}}'>
                     </div>
                 </div>
             </div>
 
             <form>
-                Click to reset the grid:
+                Click to reset the game:
                 <input type="button" ng-click="reset()" value="RESET">
             </form>
         </div>
     </div>
+
+    <div class="shootingGrid">
+        <div class="shootingGridContent">
+            <table class="shootingGridTable">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th class="battleshipGridLabels" ng-repeat="colHeader in computerShotData[0]">{{$index + 1}}</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                    <tr ng-repeat="row in computerShotData">
+                        <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
+                        <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row"  class="ng-cloak"><div class="cellContent">{{cell.state}}</div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="status" class="ng-cloak">
+        <div class="statusContent">
+            <h1>My Ships</h1>
+            <div class="shipsContainer" ng-repeat="ship in playerShipStatus track by $index">
+                <div class="shipContainer">
+                    <div class="shipElement">
+                        <img class="scaleImage" class="ng-cloak" ng-src={{playerShipStatus[$index]["img"]}}>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </body>
