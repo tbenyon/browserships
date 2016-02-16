@@ -1,6 +1,18 @@
 var shipsData = require('./ships.json');
+var guid = require('guid');
 
-exports.createGame = function(playerID, gameID) {
+exports.findOrCreateGame = function(playerID, games) {
+    var gameID = findGameID(playerID, games);
+    if (gameID === false) {
+        var game = createGame(playerID, guid.raw());
+        games.push(game);
+        return game;
+    } else {
+        return findGame(games, gameID);
+    }
+};
+
+createGame = function(playerID, gameID) {
     return {
         'playerShotData': setBlankGrid(),
         'playerShipPositions': generateRandomShipsPositions(),
@@ -23,7 +35,7 @@ exports.getGameState = function(game) {
     };
 };
 
-exports.findGameID = function(playerID, games) {
+findGameID = function(playerID, games) {
     for (var game in games) {
         if (games[game].playerID === playerID) {
             return games[game].gameID;
@@ -32,7 +44,7 @@ exports.findGameID = function(playerID, games) {
     return false;
 };
 
-exports.findGame = function(games, gameID) {
+findGame = function(games, gameID) {
     for (var game in games) {
         if (games[game].gameID === gameID) {
             return games[game];
@@ -41,7 +53,32 @@ exports.findGame = function(games, gameID) {
     return false;
 };
 
-exports.hitOrMiss = function(x, y, shipPositions) {
+exports.findGame = findGame;
+
+exports.playerShot = function(req, gameID, games) {
+    var cell = req.body.cell;
+    var game = findGame(games, gameID);
+    var hitOrMiss = isShotHitOrMiss(cell.x, cell.y, game.computerShipPositions);
+    game.playerShotData[cell.x][cell.y].state = hitOrMiss;
+
+    do {
+        var computerXShot = Math.floor((Math.random() * 10));
+        var computerYShot = Math.floor((Math.random() * 10));
+    } while (game.computerShotData[computerXShot][computerYShot].state != "O");
+    hitOrMiss = isShotHitOrMiss(computerXShot, computerYShot, game.playerShipPositions);
+    game.computerShotData[computerXShot][computerYShot].state = hitOrMiss;
+};
+
+exports.resetGame = function(games, gameID) {
+    var newGameData = createGame();
+    var game = findGame(games, gameID);
+    game.playerShotData = newGameData.playerShotData;
+    game.playerShipPositions = newGameData.playerShipPositions;
+    game.computerShotData = newGameData.computerShotData;
+    game.computerShipPositions = newGameData.computerShipPositions;
+};
+
+isShotHitOrMiss = function(x, y, shipPositions) {
     if (checkIfShip(x, y, shipPositions)) {
         return "H";
     }

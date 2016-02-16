@@ -19,13 +19,8 @@ app.get('/', function(req, res) {
     } else {
         var playerID = req.cookies['playersID'];
     }
-    var gameID = gameModule.findGameID(playerID, games);
-    if (gameID === false) {
-        var game = gameModule.createGame(playerID, guid.raw());
-        games.push(game);
-    } else {
-        var game = gameModule.findGame(games, gameID);
-    }
+    var game = gameModule.findOrCreateGame(playerID, games);
+
     res.redirect(303, '/games/' + game.gameID);
 });
 
@@ -74,31 +69,17 @@ function reportGameStateToClient(playerID, gameID) {
 }
 
 app.post('/games/:id/shot',function(req,res){
-    var cell = req.body.cell;
     var playerID = req.cookies['playersID'];
     var gameID = req.params.id;
-    var game = gameModule.findGame(games, gameID);
-    var hitOrMiss = gameModule.hitOrMiss(cell.x, cell.y, game.computerShipPositions);
-    game.playerShotData[cell.x][cell.y].state = hitOrMiss;
-    do {
-        var computerXShot = Math.floor((Math.random() * 10));
-        var computerYShot = Math.floor((Math.random() * 10));
-    } while (game.computerShotData[computerXShot][computerYShot].state != "O");
-    hitOrMiss = gameModule.hitOrMiss(computerXShot, computerYShot, game.playerShipPositions);
-    game.computerShotData[computerXShot][computerYShot].state = hitOrMiss;
+    gameModule.playerShot(req, gameID, games);
     reportGameStateToClient(playerID, gameID);
     res.send(200);
 });
 
 app.post('/games/:id/reset',function(req,res) {
-    var newGameData = gameModule.createGame();
     var playerID = req.cookies['playersID'];
     var gameID = req.params.id;
-    var game = gameModule.findGame(games, gameID);
-    game.playerShotData = newGameData.playerShotData;
-    game.playerShipPositions = newGameData.playerShipPositions;
-    game.computerShotData = newGameData.computerShotData;
-    game.computerShipPositions = newGameData.computerShipPositions;
+    gameModule.resetGame(games, gameID);
 
     reportGameStateToClient(playerID, gameID);
     res.send(200);
