@@ -41,6 +41,15 @@ exports.findGame = function(games, gameID) {
     return false;
 };
 
+exports.hitOrMiss = function(x, y, shipPositions) {
+    if (checkIfShip(x, y, shipPositions)) {
+        return "H";
+    }
+    else {
+        return "M";
+    }
+};
+
 setBlankGrid = function() {
     var board = [];
     for (var x = 0; x < 10; x++) {
@@ -54,7 +63,7 @@ setBlankGrid = function() {
     return board;
 };
 
-exports.checkIfShip = function(x, y, allShipsCoords) {
+checkIfShip = function(x, y, allShipsCoords) {
     for (boat in allShipsCoords) {
         for (segment in allShipsCoords[boat]) {
             if (allShipsCoords[boat][segment]["x"] === x && allShipsCoords[boat][segment]["y"] === y) {

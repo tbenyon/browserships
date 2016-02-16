@@ -78,12 +78,14 @@ app.post('/games/:id/shot',function(req,res){
     var playerID = req.cookies['playersID'];
     var gameID = req.params.id;
     var game = gameModule.findGame(games, gameID);
-    if (gameModule.checkIfShip(cell.x, cell.y, game.computerShipPositions)) {
-        game.playerShotData[cell.x][cell.y].state = "H";
-    }
-    else {
-        game.playerShotData[cell.x][cell.y].state = "M";
-    }
+    var hitOrMiss = gameModule.hitOrMiss(cell.x, cell.y, game.computerShipPositions);
+    game.playerShotData[cell.x][cell.y].state = hitOrMiss;
+    do {
+        var computerXShot = Math.floor((Math.random() * 10));
+        var computerYShot = Math.floor((Math.random() * 10));
+    } while (game.computerShotData[computerXShot][computerYShot].state != "O");
+    hitOrMiss = gameModule.hitOrMiss(computerXShot, computerYShot, game.playerShipPositions);
+    game.computerShotData[computerXShot][computerYShot].state = hitOrMiss;
     reportGameStateToClient(playerID, gameID);
     res.send(200);
 });

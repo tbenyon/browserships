@@ -49,7 +49,7 @@ function boardCtrl($scope, $http) {
             var playerBoardData = messageData.playerShotData;
             $scope.playerShotData = convertBoardDataToHTMLTableViewModel(playerBoardData);
             $scope.playerShipPositions = messageData.playerShipPositions;
-            $scope.playerShipStatus = messageData.playerShipStatus;
+            $scope.playerShipStatus = generateShipImages(messageData.playerShipStatus);
             var computerBoardData = messageData.computerShotData;
             $scope.computerShotData = convertBoardDataToHTMLTableViewModel(computerBoardData);
             $scope.computerShipStatus = generateShipImages(messageData.computerShipStatus);
