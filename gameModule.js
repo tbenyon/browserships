@@ -12,7 +12,7 @@ exports.findOrCreateGame = function(playerID, games) {
     }
 };
 
-createGame = function(playerID, gameID) {
+var createGame = function(playerID, gameID) {
     return {
         'playerShotData': setBlankGrid(),
         'playerShipPositions': generateRandomShipsPositions(),
@@ -35,7 +35,7 @@ exports.getGameState = function(game) {
     };
 };
 
-findGameID = function(playerID, games) {
+var findGameID = function(playerID, games) {
     for (var game in games) {
         if (games[game].playerID === playerID) {
             return games[game].gameID;
@@ -44,7 +44,7 @@ findGameID = function(playerID, games) {
     return false;
 };
 
-findGame = function(games, gameID) {
+var findGame = function(games, gameID) {
     for (var game in games) {
         if (games[game].gameID === gameID) {
             return games[game];
@@ -61,12 +61,31 @@ exports.playerShot = function(req, gameID, games) {
     var hitOrMiss = isShotHitOrMiss(cell.x, cell.y, game.computerShipPositions);
     game.playerShotData[cell.x][cell.y].state = hitOrMiss;
 
+    if (checkForWinner(game.computerShipPositions)) {
+        console.log("Player has WON!!! = )");
+    }
+
     do {
         var computerXShot = Math.floor((Math.random() * 10));
         var computerYShot = Math.floor((Math.random() * 10));
     } while (game.computerShotData[computerXShot][computerYShot].state != "O");
     hitOrMiss = isShotHitOrMiss(computerXShot, computerYShot, game.playerShipPositions);
     game.computerShotData[computerXShot][computerYShot].state = hitOrMiss;
+
+
+    if (checkForWinner(game.playerShipPositions)) {
+        console.log("Computer has WON!? = (");
+    }
+};
+
+var checkForWinner = function(shipPositions) {
+    var statusOfShips = checkForDestroyedShips(shipPositions);
+    for (var ship in statusOfShips) {
+        if (statusOfShips[ship].status === "Active") {
+            return false;
+        }
+    }
+    return true;
 };
 
 exports.resetGame = function(games, gameID) {
@@ -78,7 +97,7 @@ exports.resetGame = function(games, gameID) {
     game.computerShipPositions = newGameData.computerShipPositions;
 };
 
-isShotHitOrMiss = function(x, y, shipPositions) {
+var isShotHitOrMiss = function(x, y, shipPositions) {
     if (checkIfShip(x, y, shipPositions)) {
         return "H";
     }
@@ -87,7 +106,7 @@ isShotHitOrMiss = function(x, y, shipPositions) {
     }
 };
 
-setBlankGrid = function() {
+var setBlankGrid = function() {
     var board = [];
     for (var x = 0; x < 10; x++) {
         board[x] = [];
@@ -100,7 +119,7 @@ setBlankGrid = function() {
     return board;
 };
 
-checkIfShip = function(x, y, allShipsCoords) {
+var checkIfShip = function(x, y, allShipsCoords) {
     for (var boat in allShipsCoords) {
         for (var segment in allShipsCoords[boat]) {
             if (allShipsCoords[boat][segment]["x"] === x && allShipsCoords[boat][segment]["y"] === y) {
@@ -111,7 +130,7 @@ checkIfShip = function(x, y, allShipsCoords) {
     }
 };
 
-checkForDestroyedShips = function(allShipsCoords) {
+var checkForDestroyedShips = function(allShipsCoords) {
     var statusOfShips = [];
     var activeBoat;
     for (var boat in allShipsCoords) {
@@ -137,7 +156,7 @@ checkForDestroyedShips = function(allShipsCoords) {
     return statusOfShips;
 };
 
-generateRandomShipsPositions = function() {
+var generateRandomShipsPositions = function() {
     var allShipsCoords = {};
     for (var boat in shipsData.ships) {
         allShipsCoords[boat] = {};
