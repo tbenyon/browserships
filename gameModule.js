@@ -26,12 +26,21 @@ var createGame = function(playerID, gameID) {
 };
 
 exports.getGameState = function(game) {
+    if (checkForWinner(game.playerShipPositions)) {
+        var winner = "computer";
+    } else if (checkForWinner(game.computerShipPositions)) {
+        var winner = "player";
+    } else {
+        var winner = false;
+    }
+
     return {
         'playerShotData': game.playerShotData,
         'playerShipStatus': checkForDestroyedShips(game.playerShipPositions),
         'computerShipStatus': checkForDestroyedShips(game.computerShipPositions),
         'computerShotData': game.computerShotData,
-        'playerShipPositions': game.playerShipPositions
+        'playerShipPositions': game.playerShipPositions,
+        'winner': winner
     };
 };
 
@@ -55,27 +64,18 @@ var findGame = function(games, gameID) {
 
 exports.findGame = findGame;
 
-exports.playerShot = function(req, gameID, games) {
+exports.playerShot = function(req, gameID, game) {
     var cell = req.body.cell;
-    var game = findGame(games, gameID);
     var hitOrMiss = isShotHitOrMiss(cell.x, cell.y, game.computerShipPositions);
     game.playerShotData[cell.x][cell.y].state = hitOrMiss;
-
-    if (checkForWinner(game.computerShipPositions)) {
-        console.log("Player has WON!!! = )");
-    }
 
     do {
         var computerXShot = Math.floor((Math.random() * 10));
         var computerYShot = Math.floor((Math.random() * 10));
     } while (game.computerShotData[computerXShot][computerYShot].state != "O");
+
     hitOrMiss = isShotHitOrMiss(computerXShot, computerYShot, game.playerShipPositions);
     game.computerShotData[computerXShot][computerYShot].state = hitOrMiss;
-
-
-    if (checkForWinner(game.playerShipPositions)) {
-        console.log("Computer has WON!? = (");
-    }
 };
 
 var checkForWinner = function(shipPositions) {

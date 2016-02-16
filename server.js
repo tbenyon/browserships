@@ -28,6 +28,10 @@ app.get('/games/:id', function(req, res) {
     res.sendfile('assets/game.html');
 });
 
+app.get('/games/:id/gameComplete', function(req, res) {
+    res.sendfile('assets/gameComplete.html');
+});
+
 app.get('/games/:id/state', function(req, res) {
     req.socket.setTimeout(60000);
 
@@ -71,7 +75,8 @@ function reportGameStateToClient(playerID, gameID) {
 app.post('/games/:id/shot',function(req,res){
     var playerID = req.cookies['playersID'];
     var gameID = req.params.id;
-    gameModule.playerShot(req, gameID, games);
+    var game = gameModule.findGame(games, gameID);
+    gameModule.playerShot(req, gameID, game);
     reportGameStateToClient(playerID, gameID);
     res.send(200);
 });

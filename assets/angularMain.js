@@ -46,6 +46,12 @@ function boardCtrl($scope, $http) {
     var handleStateUpdate = function (msg) {
         $scope.$apply(function () {
             var messageData = JSON.parse(msg.data);
+
+            if (messageData.winner === 'player' || messageData.winner === 'computer') {
+                $http.post(window.location.pathname + "/reset/", null).then(
+                    window.location = window.location.pathname + '/gameComplete/');
+            }
+
             var playerBoardData = messageData.playerShotData;
             $scope.playerShotData = convertBoardDataToHTMLTableViewModel(playerBoardData);
             $scope.playerShipPositions = messageData.playerShipPositions;
