@@ -101,8 +101,8 @@ setBlankGrid = function() {
 };
 
 checkIfShip = function(x, y, allShipsCoords) {
-    for (boat in allShipsCoords) {
-        for (segment in allShipsCoords[boat]) {
+    for (var boat in allShipsCoords) {
+        for (var segment in allShipsCoords[boat]) {
             if (allShipsCoords[boat][segment]["x"] === x && allShipsCoords[boat][segment]["y"] === y) {
                 allShipsCoords[boat][segment]["state"] = "inactive";
                 return true;
