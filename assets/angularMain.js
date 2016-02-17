@@ -46,10 +46,10 @@ function boardCtrl($scope, $http) {
     var handleStateUpdate = function (msg) {
         $scope.$apply(function () {
             var messageData = JSON.parse(msg.data);
-
-            if (messageData.winner === 'player' || messageData.winner === 'computer') {
+            var winner = messageData.winner;
+            if (winner === 'player' || winner === 'computer') {
                 $http.post(window.location.pathname + "/reset/", null).then(
-                    window.location = window.location.pathname + '/gameComplete/');
+                    window.location = window.location.pathname + '/gameComplete/' + winner);
             }
 
             var playerBoardData = messageData.playerShotData;

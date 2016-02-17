@@ -6,12 +6,16 @@
 </head>
 
 <script src="/angular.min.js"></script>
-<script src="/angularMain.js"></script>
+<script src="/winScreenController.js"></script>
 
-<body ng-app="battleships" class="unselectable">
-    <h1>Someone Won!</h1>
-    <br>
-    <img class="scaleImage" src="/images/win.gif">
+<body ng-app="winScreenModule" class="unselectable">
+    <div ng-controller="winController">
+
+        <h1>{{winningPlayer}}</h1>
+        <br>
+        <img class="scaleImage" src={{resultImage}}>
+
+    </div>
 </body>
 
 </html>

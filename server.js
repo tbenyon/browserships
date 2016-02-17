@@ -28,7 +28,7 @@ app.get('/games/:id', function(req, res) {
     res.sendfile('assets/game.html');
 });
 
-app.get('/games/:id/gameComplete', function(req, res) {
+app.get('/games/:id/gameComplete/:winner', function(req, res) {
     res.sendfile('assets/gameComplete.html');
 });
 
