@@ -54,10 +54,11 @@ function boardCtrl($scope, $http) {
 
             var playerBoardData = messageData.playerShotData;
             $scope.playerShotData = convertBoardDataToHTMLTableViewModel(playerBoardData);
-            $scope.playerShipPositions = messageData.playerShipPositions;
+            var playerShipPositions = messageData.playerShipPositions;
             $scope.playerShipStatus = generateShipImages(messageData.playerShipStatus);
-            var computerBoardData = messageData.computerShotData;
-            $scope.computerShotData = convertBoardDataToHTMLTableViewModel(computerBoardData);
+            var computerShotData = messageData.computerShotData;
+            $scope.computerBoardData = convertBoardDataToHTMLTableViewModel(computerShotData);
+            addShipPositionsToBoardData($scope.computerBoardData, playerShipPositions);
             $scope.computerShipStatus = generateShipImages(messageData.computerShipStatus);
         });
     };
@@ -103,9 +104,9 @@ function convertBoardDataToHTMLTableViewModel(board) {
 
             var cellState = row[i].state;
             if (cellState === 'H') {
-                viewModelCellState.displayClass = 'hit'
+                viewModelCellState.displayClass = '/images/hit.png'
             } else if (cellState === 'M') {
-                viewModelCellState.displayClass = 'miss'
+                viewModelCellState.displayClass = '/images/miss.png'
             }
 
             return viewModelCellState;
@@ -113,6 +114,28 @@ function convertBoardDataToHTMLTableViewModel(board) {
     });
 }
 
+function addShipPositionsToBoardData(board, shipPositions) {
+    var i;
+    var x;
+    var y;
+        for (var ship in shipPositions) {
+        i = 0;
+        for (var segment in shipPositions[ship]) {
+            i ++;
+            var segmentObj = shipPositions[ship][segment];
+            x = segmentObj.x;
+            y = segmentObj.y;
+            board[y][x].shipImage = "/images/ships/" + ship + i + ".png";
+            console.log(ship);
+            if (shipPositions[ship][segment].horizontal === true) {
+                board[y][x].class = 'scaleImage';
+            } else {
+                board[y][x].class = 'rotateImage';
+            }
+
+        }
+    }
+};
 app.controller("statCtrl", ["$scope","$http", boardCtrl]);
 
 preloadImages(shipImageData);

@@ -183,6 +183,13 @@ var generateRandomShipsPositions = function() {
 
         var currentX;
         var currentY;
+        var horizontal;
+
+        if (addToY === 1) {
+            horizontal = false;
+        } else {
+            horizontal = true;
+        }
 
         for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
             currentX = startingX + addToX * i;
@@ -191,7 +198,8 @@ var generateRandomShipsPositions = function() {
             allShipsCoords[boat]["segment" + i] = {
                 "x": currentX,
                 "y": currentY,
-                "state": "active"
+                "state": "active",
+                "horizontal": horizontal
             };
         }
     }

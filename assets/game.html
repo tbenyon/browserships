@@ -27,7 +27,11 @@
                 <tbody>
                     <tr ng-repeat="row in playerShotData">
                         <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
-                        <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row"  class="ng-cloak" ng-click="shoot($index, $parent.$index)"><div class="cellContent">{{cell.state}}</div></td>
+                        <td class="tableBody" ng-repeat="cell in row"  class="ng-cloak" ng-click="shoot($index, $parent.$index)">
+                            <div class="cellContent">
+                                <img class="scaleImage" ng-src="{{cell.displayClass}}" onerror='this.style.display = "none"'/>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -58,14 +62,20 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th class="battleshipGridLabels" ng-repeat="colHeader in computerShotData[0]">{{$index + 1}}</th>
+                    <th class="battleshipGridLabels" ng-repeat="colHeader in computerBoardData[0]">{{$index + 1}}</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                    <tr ng-repeat="row in computerShotData">
-                        <td class="battleshipGridLabels"> <div class="cellContent"><b>{{rowLabels[$index]}}</b></div></td>
-                        <td class="tableBody {{cell.displayClass}}" ng-repeat="cell in row"  class="ng-cloak"><div class="cellContent">{{cell.state}}</div></td>
+                    <tr ng-repeat="row in computerBoardData">
+                        <td class="battleshipGridLabels">
+                            <div class="cellContent"><b>{{rowLabels[$index]}}</b></div>
+                        </td>
+                        <td class="tableBody {{cell.class}}" style="background-image:url({{cell.shipImage}});background-size: 100% 100%" ng-repeat="cell in row"  class="ng-cloak">
+                            <div class="cellContent">
+                                <img class="scaleImage" ng-src="{{cell.displayClass}}" onerror='this.style.display = "none"'/>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
