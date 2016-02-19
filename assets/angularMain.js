@@ -48,8 +48,8 @@ function boardCtrl($scope, $http) {
             var messageData = JSON.parse(msg.data);
             var winner = messageData.winner;
             if (winner === 'player' || winner === 'computer') {
-                $http.post(window.location.pathname + "/reset/", null).then(
-                    window.location = window.location.pathname + '/gameComplete/' + winner);
+                window.location = window.location.pathname + '/gameComplete/' + winner;
+                $http.post(window.location.pathname + "/reset/", null)
             }
 
             var playerBoardData = messageData.playerShotData;
