@@ -128,7 +128,8 @@ div.instructions {
     -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=1.5708, M12=-1.5708, M21=1.5708, M22=1.5708)";
 }
 
-@media (min-width: 800px) {
+
+@media (min-width: 600px) {
     .shootingGrid {
         width:66%;
         float:left;
@@ -136,6 +137,21 @@ div.instructions {
 
     div.status{
         width:33%;
+        float:right;
+    }
+    div.statusContent {
+        width: 70%;
+    }
+}
+
+@media (min-width: 900px) {
+    .shootingGrid {
+        width:40%;
+        float:left;
+    }
+
+    div.status{
+        width:20%;
         float:right;
     }
     div.statusContent {
