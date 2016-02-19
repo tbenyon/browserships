@@ -126,7 +126,6 @@ function addShipPositionsToBoardData(board, shipPositions) {
             x = segmentObj.x;
             y = segmentObj.y;
             board[y][x].shipImage = "/images/ships/" + ship + i + ".png";
-            console.log(ship);
             if (shipPositions[ship][segment].horizontal === true) {
                 board[y][x].class = 'scaleImage';
             } else {
