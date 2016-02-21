@@ -1,4 +1,5 @@
 var shipsData = require('./ships.json');
+var AIModule = require('./computerAI.js');
 var guid = require('guid');
 
 exports.findOrCreateGame = function(playerID, games) {
@@ -69,10 +70,9 @@ exports.playerShot = function(req, gameID, game) {
     var hitOrMiss = isShotHitOrMiss(cell.x, cell.y, game.computerShipPositions);
     game.playerShotData[cell.x][cell.y].state = hitOrMiss;
 
-    do {
-        var computerXShot = Math.floor((Math.random() * 10));
-        var computerYShot = Math.floor((Math.random() * 10));
-    } while (game.computerShotData[computerXShot][computerYShot].state != "O");
+    var shotData = AIModule.getComputerShotCoords(game.playerShotData);
+    var computerXShot = shotData.x;
+    var computerYShot = shotData.y;
 
     hitOrMiss = isShotHitOrMiss(computerXShot, computerYShot, game.playerShipPositions);
     game.computerShotData[computerXShot][computerYShot].state = hitOrMiss;

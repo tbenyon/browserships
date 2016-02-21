@@ -1,0 +1,75 @@
+var assert = require('chai').assert;
+var mockery = require('mockery');
+
+describe('Computer Player', function() {
+
+    var testResultGenerator = function() {
+
+        var results = [];
+        return {
+            initResults: function(testResults) {
+              results = testResults;
+            },
+            stub: {
+                getRandomCoords: function() {
+                    return results.shift();
+                }
+            }
+        };
+    }();
+
+    var AI = null;
+    before(function () {
+        mockery.enable();
+        mockery.registerMock('./coordinateGenerator.js', testResultGenerator.stub);
+        mockery.registerAllowable('../computerAI.js');
+        AI = require("../computerAI.js");
+    });
+
+    after(function() {
+        mockery.disable();
+    });
+
+
+    describe('For an empty board', function() {
+        it('should select a random coordinate', function() {
+            testResultGenerator.initResults([{x: 3, y: 3}]);
+
+            var testBoardData = getBlankGrid();
+            var nextShot = AI.getComputerShotCoords(testBoardData);
+            assert.propertyVal(nextShot, 'x', 3);
+            assert.propertyVal(nextShot, 'y', 3);
+        });
+    });
+
+    describe('For a position already shot at', function() {
+       it('should request a different set of coordinates', function() {
+           testResultGenerator.initResults([
+               {x: 3, y: 3},
+               {x: 3, y: 3},
+               {x: 2, y: 2}
+           ]);
+
+           var testBoardData = getBlankGrid();
+           testBoardData[3][3].state = "M";
+           var nextShot = AI.getComputerShotCoords(testBoardData);
+           assert.propertyVal(nextShot, 'x', 2);
+           assert.propertyVal(nextShot, 'y', 2);
+       });
+    });
+});
+
+
+
+var getBlankGrid = function() {
+    var board = [];
+    for (var x = 0; x < 10; x++) {
+        board[x] = [];
+        for (var y = 0; y < 10; y++) {
+            board[x][y] = {
+                state: "O"
+            }
+        }
+    }
+    return board;
+};
