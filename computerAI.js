@@ -1,8 +1,6 @@
 var coordGenerator = require('./coordinateGenerator.js');
 
-var nextShots = [];
-
-exports.getComputerShotCoords = function(computerShotData) {
+exports.getComputerShotCoords = function(computerShotData, nextShots) {
     var coords;
 
     do {
@@ -15,7 +13,7 @@ exports.getComputerShotCoords = function(computerShotData) {
     return coords;
 };
 
-exports.reportHit = function(shotData) {
+exports.reportHit = function(shotData, nextShots) {
     var nextShotData = JSON.parse(JSON.stringify(shotData));
     nextShotData.y -= 1;
     nextShots.push(nextShotData);

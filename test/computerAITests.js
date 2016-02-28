@@ -42,7 +42,7 @@ describe('Computer Player', function() {
             testResultGenerator.initResults([{x: 3, y: 3}]);
 
             var testBoardData = getBlankGrid();
-            var nextShot = AI.getComputerShotCoords(testBoardData);
+            var nextShot = AI.getComputerShotCoords(testBoardData, []);
             assert.propertyVal(nextShot, 'x', 3);
             assert.propertyVal(nextShot, 'y', 3);
         });
@@ -58,7 +58,7 @@ describe('Computer Player', function() {
 
            var testBoardData = getBlankGrid();
            testBoardData[3][3].state = "M";
-           var nextShot = AI.getComputerShotCoords(testBoardData);
+           var nextShot = AI.getComputerShotCoords(testBoardData, []);
            assert.propertyVal(nextShot, 'x', 2);
            assert.propertyVal(nextShot, 'y', 2);
        });
@@ -73,18 +73,20 @@ describe('Computer Player', function() {
            ]);
 
             var testBoardData = getBlankGrid();
+            var nextShots = [];
 
             gameModule.computerShot({
                 computerShotData: testBoardData,
-                playerShipPositions: testShipPositions.ships
+                playerShipPositions: testShipPositions.ships,
+                computerNextShots: nextShots
             });
 
             gameModule.computerShot({
                 computerShotData: testBoardData,
-                playerShipPositions: testShipPositions.ships
+                playerShipPositions: testShipPositions.ships,
+                computerNextShots: nextShots
             });
-
-            var nextShot = AI.getComputerShotCoords(testBoardData);
+            var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
 
             assert.propertyVal(nextShot, 'x', 1);
             assert.propertyVal(nextShot, 'y', 0);

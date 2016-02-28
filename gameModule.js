@@ -22,7 +22,9 @@ var createGame = function(playerID, gameID) {
         'computerShipPositions': shipPlacement.generateRandom(),
 
         'playerID': playerID,
-        'gameID': gameID
+        'gameID': gameID,
+
+        'computerNextShots': []
     };
 };
 
@@ -73,11 +75,11 @@ exports.playerShot = function(req, gameID, game) {
 };
 
 var computerShot = function(game) {
-    var shotData = AIModule.getComputerShotCoords(game.computerShotData);
+    var shotData = AIModule.getComputerShotCoords(game.computerShotData, game.computerNextShots);
 
     var hitOrMiss = isShotHitOrMiss(shotData, game.playerShipPositions);
     if (hitOrMiss === "H") {
-        AIModule.reportHit(shotData);
+        AIModule.reportHit(shotData, game.computerNextShots);
     }
     game.computerShotData[shotData.x][shotData.y].state = hitOrMiss;
 };
@@ -101,6 +103,7 @@ exports.resetGame = function(games, gameID) {
     game.playerShipPositions = newGameData.playerShipPositions;
     game.computerShotData = newGameData.computerShotData;
     game.computerShipPositions = newGameData.computerShipPositions;
+    game.computerNextShots = [];
 };
 
 var isShotHitOrMiss = function(shotData, shipPositions) {
