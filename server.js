@@ -3,11 +3,14 @@ var bodyParser = require('body-parser');
 var gameModule = require('./gameModule.js');
 var cookieParser = require('cookie-parser');
 var guid = require('guid');
+var favicon = require('express-favicon');
+
 var app = express();
 
 app.use(express.static('assets'));
 app.use(bodyParser.json());
 app.use(cookieParser("secret messagessdf"));
+app.use(favicon(__dirname + '/assets/images/favicon.ico'));
 
 var games = [];
 var openConnections = [];
