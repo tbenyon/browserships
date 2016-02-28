@@ -1,6 +1,6 @@
-var shipsData = require('./ships.json');
 var AIModule = require('./computerAI.js');
 var guid = require('guid');
+var shipPlacement = require('./shipPlacement.js');
 
 exports.findOrCreateGame = function(playerID, games) {
     var gameID = findGameID(playerID, games);
@@ -16,10 +16,10 @@ exports.findOrCreateGame = function(playerID, games) {
 var createGame = function(playerID, gameID) {
     return {
         'playerShotData': setBlankGrid(),
-        'playerShipPositions': generateRandomShipsPositions(),
+        'playerShipPositions': shipPlacement.generateRandom(),
 
         'computerShotData': setBlankGrid(),
-        'computerShipPositions': generateRandomShipsPositions(),
+        'computerShipPositions': shipPlacement.generateRandom(),
 
         'playerID': playerID,
         'gameID': gameID
@@ -34,7 +34,6 @@ exports.getGameState = function(game) {
     } else {
         var winner = false;
     }
-
     return {
         'playerShotData': game.playerShotData,
         'playerShipStatus': checkForDestroyedShips(game.playerShipPositions),
@@ -67,16 +66,23 @@ exports.findGame = findGame;
 
 exports.playerShot = function(req, gameID, game) {
     var cell = req.body.cell;
-    var hitOrMiss = isShotHitOrMiss(cell.x, cell.y, game.computerShipPositions);
+    var hitOrMiss = isShotHitOrMiss(cell, game.computerShipPositions);
     game.playerShotData[cell.x][cell.y].state = hitOrMiss;
+    computerShot(game);
 
-    var shotData = AIModule.getComputerShotCoords(game.playerShotData);
-    var computerXShot = shotData.x;
-    var computerYShot = shotData.y;
-
-    hitOrMiss = isShotHitOrMiss(computerXShot, computerYShot, game.playerShipPositions);
-    game.computerShotData[computerXShot][computerYShot].state = hitOrMiss;
 };
+
+var computerShot = function(game) {
+    var shotData = AIModule.getComputerShotCoords(game.computerShotData);
+
+    var hitOrMiss = isShotHitOrMiss(shotData, game.playerShipPositions);
+    if (hitOrMiss === "H") {
+        AIModule.reportHit(shotData);
+    }
+    game.computerShotData[shotData.x][shotData.y].state = hitOrMiss;
+};
+
+exports.computerShot = computerShot;
 
 var checkForWinner = function(shipPositions) {
     var statusOfShips = checkForDestroyedShips(shipPositions);
@@ -97,8 +103,8 @@ exports.resetGame = function(games, gameID) {
     game.computerShipPositions = newGameData.computerShipPositions;
 };
 
-var isShotHitOrMiss = function(x, y, shipPositions) {
-    if (checkIfShip(x, y, shipPositions)) {
+var isShotHitOrMiss = function(shotData, shipPositions) {
+    if (checkIfShip(shotData, shipPositions)) {
         return "H";
     }
     else {
@@ -119,10 +125,10 @@ var setBlankGrid = function() {
     return board;
 };
 
-var checkIfShip = function(x, y, allShipsCoords) {
+var checkIfShip = function(shotData, allShipsCoords) {
     for (var boat in allShipsCoords) {
         for (var segment in allShipsCoords[boat]) {
-            if (allShipsCoords[boat][segment]["x"] === x && allShipsCoords[boat][segment]["y"] === y) {
+            if (allShipsCoords[boat][segment]["x"] === shotData.x && allShipsCoords[boat][segment]["y"] === shotData.y) {
                 allShipsCoords[boat][segment]["state"] = "inactive";
                 return true;
             }
@@ -156,97 +162,3 @@ var checkForDestroyedShips = function(allShipsCoords) {
     return statusOfShips;
 };
 
-var generateRandomShipsPositions = function() {
-    var allShipsCoords = {};
-    for (var boat in shipsData.ships) {
-        allShipsCoords[boat] = {};
-        placeShip();
-    }
-    return allShipsCoords;
-
-    function placeShip() {
-        var direction;
-        var addToX;
-        var addToY;
-        var startingX;
-        var startingY;
-
-        var placed = false;
-        while (placed === false) {
-            direction = getRandomDirection();
-            addToX = direction[0];
-            addToY = direction[1];
-            startingX = Math.floor(Math.random() * 10);
-            startingY = Math.floor(Math.random() * 10);
-            placed = isShipPlacementValid(startingX, startingY, addToX, addToY, boat)
-        }
-
-        var currentX;
-        var currentY;
-        var horizontal;
-
-        if (addToY === 1) {
-            horizontal = false;
-        } else {
-            horizontal = true;
-        }
-
-        for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
-            currentX = startingX + addToX * i;
-            currentY = startingY + addToY * i;
-
-            allShipsCoords[boat]["segment" + i] = {
-                "x": currentX,
-                "y": currentY,
-                "state": "active",
-                "horizontal": horizontal
-            };
-        }
-    }
-
-    function getRandomDirection() {
-        var addToX = 0;
-        var addToY = 0;
-        var xDirection = Math.random() >= 0.5;
-
-        if (xDirection) {
-            addToX = 1;
-        }
-        else {
-            addToY = 1;
-        }
-
-        return [addToX, addToY];
-    }
-
-    function isShipPlacementValid(startingX, startingY, addToX, addToY, boat) {
-        var currentX;
-        var currentY;
-        for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
-            currentX = startingX + addToX * i;
-            currentY = startingY + addToY * i;
-
-            if (currentX > 9 || currentY > 9) {
-                return false;
-            }
-
-            if (shipInOwnSpace(currentX, currentY) === false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function shipInOwnSpace(currentX, currentY) {
-        for (boat in allShipsCoords) {
-            for (var coord in allShipsCoords[boat]) {
-                var xCoord = allShipsCoords[boat][coord]["x"];
-                var yCoord = allShipsCoords[boat][coord]["y"];
-
-                if (xCoord === currentX && yCoord == currentY) {
-                    return false;
-                }
-            }
-        }
-    }
-};

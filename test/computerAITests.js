@@ -1,5 +1,6 @@
 var assert = require('chai').assert;
 var mockery = require('mockery');
+var testShipPositions = require('../ships.json');
 
 describe('Computer Player', function() {
 
@@ -19,11 +20,16 @@ describe('Computer Player', function() {
     }();
 
     var AI = null;
+    var gameModule = null;
     before(function () {
         mockery.enable();
         mockery.registerMock('./coordinateGenerator.js', testResultGenerator.stub);
+        mockery.registerMock('./shipPlacement.js', {generateRandom: function() {
+            return testShipPositions;
+        }});
         mockery.registerAllowable('../computerAI.js');
         AI = require("../computerAI.js");
+        gameModule = require("../gameModule.js");
     });
 
     after(function() {
@@ -56,6 +62,33 @@ describe('Computer Player', function() {
            assert.propertyVal(nextShot, 'x', 2);
            assert.propertyVal(nextShot, 'y', 2);
        });
+    });
+
+    describe('When a hit is made', function() {
+        it('should make the next shot at the coordinate above', function() {
+           testResultGenerator.initResults([
+               {x: 3, y: 0},
+               {x: 1, y: 1},
+               {x: 2, y: 2}
+           ]);
+
+            var testBoardData = getBlankGrid();
+
+            gameModule.computerShot({
+                computerShotData: testBoardData,
+                playerShipPositions: testShipPositions.ships
+            });
+
+            gameModule.computerShot({
+                computerShotData: testBoardData,
+                playerShipPositions: testShipPositions.ships
+            });
+
+            var nextShot = AI.getComputerShotCoords(testBoardData);
+
+            assert.propertyVal(nextShot, 'x', 1);
+            assert.propertyVal(nextShot, 'y', 0);
+        });
     });
 });
 
