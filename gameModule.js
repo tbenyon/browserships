@@ -68,10 +68,11 @@ exports.findGame = findGame;
 
 exports.playerShot = function(req, gameID, game) {
     var cell = req.body.cell;
-    var hitOrMiss = isShotHitOrMiss(cell, game.computerShipPositions);
-    game.playerShotData[cell.x][cell.y].state = hitOrMiss;
-    computerShot(game);
-
+    if (game.playerShotData[cell.x][cell.y].state === "O") {
+        var hitOrMiss = isShotHitOrMiss(cell, game.computerShipPositions);
+        game.playerShotData[cell.x][cell.y].state = hitOrMiss;
+        computerShot(game);
+    }
 };
 
 var computerShot = function(game) {
