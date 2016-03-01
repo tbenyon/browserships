@@ -1,52 +1,45 @@
 var shipsData = require('./ships.json');
 
+exports.checkAndStoreUserShipPlacement = function(allBoatCoords) {
+    var validShip;
+    var allShipsCoords = {};
+    for (var boat in shipsData.ships) {
+        allShipsCoords[boat] = {};
+        validShip = isShipPlacementValid(allShipsCoords, boat, allBoatCoords[boat]);
+        if (validShip === false) {
+            console.log(boat + " cannot be placed here!");
+            return boat + "invalid"
+        }
+    }
+    return allShipsCoords;
+};
+
 exports.generateRandom = function() {
     var allShipsCoords = {};
     for (var boat in shipsData.ships) {
         allShipsCoords[boat] = {};
-        placeShip();
+        getRandomShipCoords(allShipsCoords, boat);
     }
     return allShipsCoords;
+};
 
-    function placeShip() {
-        var direction;
-        var addToX;
-        var addToY;
-        var startingX;
-        var startingY;
+function getRandomShipCoords(allShipsCoords, boat) {
+    var direction;
+    var boatData;
 
-        var placed = false;
-        while (placed === false) {
-            direction = getRandomDirection();
-            addToX = direction[0];
-            addToY = direction[1];
-            startingX = Math.floor(Math.random() * 10);
-            startingY = Math.floor(Math.random() * 10);
-            placed = isShipPlacementValid(startingX, startingY, addToX, addToY, boat)
-        }
+    var placed = false;
+    while (placed === false) {
+        direction = getRandomDirection();
+        boatData = {
+            addToX: direction[0],
+            addToY: direction[1],
+            startingX: Math.floor(Math.random() * 10),
+            startingY: Math.floor(Math.random() * 10)
+        };
 
-        var currentX;
-        var currentY;
-        var horizontal;
-
-        if (addToY === 1) {
-            horizontal = false;
-        } else {
-            horizontal = true;
-        }
-
-        for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
-            currentX = startingX + addToX * i;
-            currentY = startingY + addToY * i;
-
-            allShipsCoords[boat]["segment" + i] = {
-                "x": currentX,
-                "y": currentY,
-                "state": "active",
-                "horizontal": horizontal
-            };
-        }
+        placed = isShipPlacementValid(allShipsCoords, boat, boatData)
     }
+    placeShip(allShipsCoords, boat, boatData);
 
     function getRandomDirection() {
         var addToX = 0;
@@ -62,24 +55,57 @@ exports.generateRandom = function() {
 
         return [addToX, addToY];
     }
+}
 
-    function isShipPlacementValid(startingX, startingY, addToX, addToY, boat) {
-        var currentX;
-        var currentY;
-        for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
-            currentX = startingX + addToX * i;
-            currentY = startingY + addToY * i;
+function placeShip(allShipsCoords, boat, boatData) {
+    var startingX = boatData.startingX;
+    var startingY = boatData.startingY;
+    var addToX = boatData.addToX;
+    var addToY = boatData.addToY;
+    var currentX;
+    var currentY;
+    var horizontal;
 
-            if (currentX > 9 || currentY > 9) {
-                return false;
-            }
-
-            if (shipInOwnSpace(currentX, currentY) === false) {
-                return false;
-            }
-        }
-        return true;
+    if (addToY === 1) {
+        horizontal = false;
+    } else {
+        horizontal = true;
     }
+
+    for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
+        currentX = startingX + addToX * i;
+        currentY = startingY + addToY * i;
+
+        allShipsCoords[boat]["segment" + i] = {
+            "x": currentX,
+            "y": currentY,
+            "state": "active",
+            "horizontal": horizontal
+        };
+    }
+}
+
+function isShipPlacementValid(allShipsCoords, boat, providedBoatData) {
+    var startingX = providedBoatData.startingX;
+    var startingY = providedBoatData.startingY;
+    var addToX = providedBoatData.addToX;
+    var addToY = providedBoatData.addToY;
+    var currentX;
+    var currentY;
+
+    for (var i = 0; i < shipsData["ships"][boat]["length"]; i++) {
+        currentX = startingX + addToX * i;
+        currentY = startingY + addToY * i;
+
+        if (currentX > 9 || currentY > 9) {
+            return false;
+        }
+
+        if (shipInOwnSpace(currentX, currentY) === false) {
+            return false;
+        }
+    }
+    return true;
 
     function shipInOwnSpace(currentX, currentY) {
         for (boat in allShipsCoords) {
@@ -93,4 +119,4 @@ exports.generateRandom = function() {
             }
         }
     }
-};
+}
