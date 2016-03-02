@@ -75,17 +75,14 @@ describe('Computer Player', function() {
             var testBoardData = getBlankGrid();
             var nextShots = [];
 
-            gameModule.computerShot({
-                computerShotData: testBoardData,
-                playerShipPositions: testShipPositions.ships,
-                computerNextShots: nextShots
-            });
+            for (var i = 0; i < 2; i++) {
+                gameModule.computerShot({
+                    computerShotData: testBoardData,
+                    playerShipPositions: testShipPositions.ships,
+                    computerNextShots: nextShots
+                });
+            }
 
-            gameModule.computerShot({
-                computerShotData: testBoardData,
-                playerShipPositions: testShipPositions.ships,
-                computerNextShots: nextShots
-            });
             var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
 
             assert.propertyVal(nextShot, 'x', 1);
