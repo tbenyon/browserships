@@ -64,7 +64,33 @@ describe('Computer Player', function() {
        });
     });
 
-    describe('When a hit is made', function() {
+    describe('When an initial hit is made', function() {
+        it('should store the four surrounding cells as the following places to shoot', function() {
+            testResultGenerator.initResults([{x: 1, y: 1}]);
+
+            var testBoardData = getBlankGrid();
+            var nextShots = [];
+
+
+            gameModule.computerShot({
+                    computerShotData: testBoardData,
+                    playerShipPositions: testShipPositions.ships,
+                    computerNextShots: nextShots
+            });
+
+            assert.propertyVal(nextShots[0], 'x', 1);
+            assert.propertyVal(nextShots[0], 'y', 0);
+
+            assert.propertyVal(nextShots[1], 'x', 1);
+            assert.propertyVal(nextShots[1], 'y', 2);
+
+            assert.propertyVal(nextShots[2], 'x', 0);
+            assert.propertyVal(nextShots[2], 'y', 1);
+
+            assert.propertyVal(nextShots[3], 'x', 2);
+            assert.propertyVal(nextShots[3], 'y', 1);
+        });
+
         it('should make the next shot at the coordinate above', function() {
            testResultGenerator.initResults([
                {x: 3, y: 0},

@@ -14,7 +14,20 @@ exports.getComputerShotCoords = function(computerShotData, nextShots) {
 };
 
 exports.reportHit = function(shotData, nextShots) {
-    var nextShotData = JSON.parse(JSON.stringify(shotData));
+    var nextShotData = deepCopy(shotData);
     nextShotData.y -= 1;
-    nextShots.push(nextShotData);
+    nextShots.push(deepCopy(nextShotData));
+    nextShotData.y += 2;
+    nextShots.push(deepCopy(nextShotData));
+    nextShotData.y -= 1;
+
+    nextShotData.x -= 1;
+    nextShots.push(deepCopy(nextShotData));
+    nextShotData.x += 2;
+    nextShots.push(deepCopy(nextShotData));
+
+    function deepCopy(value) {
+        var newValue = JSON.parse(JSON.stringify(value));
+        return newValue
+    }
 };
