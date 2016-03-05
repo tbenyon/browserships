@@ -60,6 +60,10 @@ exports.reportHit = function(shotData, computerPlayerMemory) {
     }
 };
 
+exports.reportMiss = function(computerMemory) {
+        computerMemory.nextShots.shift();
+};
+
 exports.reportDestroyedShip = function(computerPlayerMemory, shipName) {
     if (shipsInformation.ships[shipName].length === computerPlayerMemory.hitCoords.length) {
         computerPlayerMemory.hitCoords.length = 0;

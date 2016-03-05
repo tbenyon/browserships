@@ -150,6 +150,33 @@ describe('Computer Player', function() {
             assert.equal(nextShots.length, 0);
         });
     });
+
+    describe('Once an initial hit has been made and this is followed by a miss', function() {
+        it('should delete the current attack plan', function() {
+            testResultGenerator.initResults([
+                {x: 9, y: 3}
+            ]);
+
+            var testBoardData = getBlankGrid();
+            var nextShots = [];
+            var hitCoords = [];
+            for (var i = 0; i < 3; i++) {
+                gameModule.computerShot({
+                    'computerShotData': testBoardData,
+                    'playerShipPositions': testShipPositions,
+                    'computerPlayerMemory': {
+                        'nextShots': nextShots,
+                        'hitCoords': hitCoords
+                    }
+                });
+            }
+
+            var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
+
+            assert.propertyVal(nextShot, 'x', 9);
+            assert.propertyVal(nextShot, 'y', 4);
+        });
+    });
 });
 
 var getBlankGrid = function() {

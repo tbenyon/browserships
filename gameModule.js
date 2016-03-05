@@ -81,10 +81,16 @@ exports.playerShot = function(req, gameID, game) {
 var computerShot = function(game) {
     var beforeShipStatus = checkForDestroyedShips(game.playerShipPositions);
     var shotData = AIModule.getComputerShotCoords(game.computerShotData, game.computerPlayerMemory.nextShots);
+
     var hitOrMiss = isShotHitOrMiss(shotData, game.playerShipPositions);
     if (hitOrMiss === "H") {
+        console.log("had hit");
         AIModule.reportHit(shotData, game.computerPlayerMemory);
+    } else {
+        console.log("had miss");
+        AIModule.reportMiss(game.computerPlayerMemory);
     }
+
     game.computerShotData[shotData.x][shotData.y].state = hitOrMiss;
     var afterShipStatus = checkForDestroyedShips(game.playerShipPositions);
     checkIfShotDestroyedShip(game, beforeShipStatus, afterShipStatus);
