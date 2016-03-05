@@ -1,6 +1,9 @@
 var assert = require('chai').assert;
 var mockery = require('mockery');
-var testShipPositions = require('../ships.json');
+var shipPlacement = require('../shipPlacement.js');
+
+var testShipData = require('../ships.json');
+var testShipPositions = shipPlacement.checkAndStoreDefinedShipPlacement(testShipData.ships);
 
 describe('Computer Player', function() {
 
@@ -71,13 +74,11 @@ describe('Computer Player', function() {
             var testBoardData = getBlankGrid();
             var nextShots = [];
 
-
             gameModule.computerShot({
                     computerShotData: testBoardData,
-                    playerShipPositions: testShipPositions.ships,
+                    playerShipPositions: testShipPositions,
                     computerNextShots: nextShots
             });
-
             assert.propertyVal(nextShots[0][0], 'x', 3);
             assert.propertyVal(nextShots[0][0], 'y', 2);
 
@@ -106,11 +107,10 @@ describe('Computer Player', function() {
 
             var testBoardData = getBlankGrid();
             var nextShots = [];
-
             for (var i = 0; i < 2; i++) {
                 gameModule.computerShot({
                     computerShotData: testBoardData,
-                    playerShipPositions: testShipPositions.ships,
+                    playerShipPositions: testShipPositions,
                     computerNextShots: nextShots
                 });
             }

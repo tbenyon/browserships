@@ -2,10 +2,13 @@ var coordGenerator = require('./coordinateGenerator.js');
 
 exports.getComputerShotCoords = function(computerShotData, nextShots) {
     var coords;
+    if (nextShots.length !== 0 && nextShots[0].length === 0) {
+            nextShots.shift();
+    }
 
     do {
         if (nextShots.length >= 1) {
-            coords = nextShots.shift();
+            coords = nextShots[0].shift();
         } else {
             coords = coordGenerator.getRandomCoords();
         }
@@ -15,19 +18,42 @@ exports.getComputerShotCoords = function(computerShotData, nextShots) {
 
 exports.reportHit = function(shotData, nextShots) {
     var nextShotData = deepCopy(shotData);
-    nextShotData.y -= 1;
-    nextShots.push(deepCopy(nextShotData));
-    nextShotData.y += 2;
-    nextShots.push(deepCopy(nextShotData));
-    nextShotData.y -= 1;
 
-    nextShotData.x -= 1;
-    nextShots.push(deepCopy(nextShotData));
-    nextShotData.x += 2;
-    nextShots.push(deepCopy(nextShotData));
+    if (nextShots.length === 0) {
+        storeDataIfNextShotsIsEmpty(nextShotData);
+    }
+
+    function storeDataIfNextShotsIsEmpty() {
+        nextShots.push([]);
+        while (nextShotData.y > 0) {
+            nextShotData.y -= 1;
+            nextShots[0].push(deepCopy(nextShotData));
+        }
+
+        nextShots.push([]);
+        nextShotData = deepCopy(shotData);
+        while (nextShotData.y < 9) {
+            nextShotData.y += 1;
+            nextShots[1].push(deepCopy(nextShotData));
+        }
+
+        nextShots.push([]);
+        nextShotData = deepCopy(shotData);
+        while (nextShotData.x > 0) {
+            nextShotData.x -= 1;
+            nextShots[2].push(deepCopy(nextShotData));
+        }
+        nextShots.push([]);
+        nextShotData = deepCopy(shotData);
+        while (nextShotData.x < 9) {
+            nextShotData.x += 1;
+            nextShots[3].push(deepCopy(nextShotData));
+        }
+
+    }
+
 
     function deepCopy(value) {
-        var newValue = JSON.parse(JSON.stringify(value));
-        return newValue
+        return JSON.parse(JSON.stringify(value));
     }
 };

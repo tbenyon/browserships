@@ -77,7 +77,6 @@ exports.playerShot = function(req, gameID, game) {
 
 var computerShot = function(game) {
     var shotData = AIModule.getComputerShotCoords(game.computerShotData, game.computerNextShots);
-
     var hitOrMiss = isShotHitOrMiss(shotData, game.playerShipPositions);
     if (hitOrMiss === "H") {
         AIModule.reportHit(shotData, game.computerNextShots);

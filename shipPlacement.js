@@ -1,17 +1,32 @@
 var shipsData = require('./ships.json');
 
-exports.checkAndStoreUserShipPlacement = function(allBoatCoords) {
+exports.checkAndStoreDefinedShipPlacement = function(allBoatsData) {
     var validShip;
     var allShipsCoords = {};
-    for (var boat in shipsData.ships) {
+    var allBoatCoords = {};
+    for (var boat in allBoatsData) {
+        allBoatCoords[boat] = {
+            'startingX': allBoatsData[boat]['coord'].x,
+            'startingY': allBoatsData[boat]['coord'].y,
+            'addToX': 0,
+            'addToY': 0
+        };
+        if (boat.horizontal === true) {
+            allBoatCoords[boat]['addToX'] = 1;
+        } else {
+            allBoatCoords[boat]['addToY'] = 1;
+        }
+
         allShipsCoords[boat] = {};
         validShip = isShipPlacementValid(allShipsCoords, boat, allBoatCoords[boat]);
         if (validShip === false) {
             console.log(boat + " cannot be placed here!");
             return boat + "invalid"
+        } else {
+            placeShip(allBoatCoords, boat, allBoatCoords[boat]);
         }
     }
-    return allShipsCoords;
+    return allBoatCoords;
 };
 
 exports.generateRandom = function() {
