@@ -39,12 +39,12 @@ describe('Computer Player', function() {
 
     describe('For an empty board', function() {
         it('should select a random coordinate', function() {
-            testResultGenerator.initResults([{x: 3, y: 3}]);
+            testResultGenerator.initResults([{x: 2, y: 2}]);
 
             var testBoardData = getBlankGrid();
             var nextShot = AI.getComputerShotCoords(testBoardData, []);
-            assert.propertyVal(nextShot, 'x', 3);
-            assert.propertyVal(nextShot, 'y', 3);
+            assert.propertyVal(nextShot, 'x', 2);
+            assert.propertyVal(nextShot, 'y', 2);
         });
     });
 
@@ -65,8 +65,8 @@ describe('Computer Player', function() {
     });
 
     describe('When an initial hit is made', function() {
-        it('should store the four surrounding cells as the following places to shoot', function() {
-            testResultGenerator.initResults([{x: 1, y: 1}]);
+        it('should store next shot lines for the four surrounding cells', function() {
+            testResultGenerator.initResults([{x: 3, y: 3}]);
 
             var testBoardData = getBlankGrid();
             var nextShots = [];
@@ -78,17 +78,23 @@ describe('Computer Player', function() {
                     computerNextShots: nextShots
             });
 
-            assert.propertyVal(nextShots[0], 'x', 1);
-            assert.propertyVal(nextShots[0], 'y', 0);
+            assert.propertyVal(nextShots[0][0], 'x', 3);
+            assert.propertyVal(nextShots[0][0], 'y', 2);
 
-            assert.propertyVal(nextShots[1], 'x', 1);
-            assert.propertyVal(nextShots[1], 'y', 2);
+            assert.propertyVal(nextShots[0][1], 'x', 3);
+            assert.propertyVal(nextShots[0][1], 'y', 1);
 
-            assert.propertyVal(nextShots[2], 'x', 0);
-            assert.propertyVal(nextShots[2], 'y', 1);
+            assert.propertyVal(nextShots[1][0], 'x', 3);
+            assert.propertyVal(nextShots[1][0], 'y', 4);
 
-            assert.propertyVal(nextShots[3], 'x', 2);
-            assert.propertyVal(nextShots[3], 'y', 1);
+            assert.propertyVal(nextShots[2][0], 'x', 2);
+            assert.propertyVal(nextShots[2][0], 'y', 3);
+
+            assert.propertyVal(nextShots[2][1], 'x', 1);
+            assert.propertyVal(nextShots[2][1], 'y', 3);
+
+            assert.propertyVal(nextShots[3][5], 'x', 9);
+            assert.propertyVal(nextShots[3][5], 'y', 3);
         });
 
         it('should make the next shot at the coordinate above', function() {
