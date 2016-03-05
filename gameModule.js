@@ -24,7 +24,10 @@ var createGame = function(playerID, gameID) {
         'playerID': playerID,
         'gameID': gameID,
 
-        'computerNextShots': []
+        'computerPlayerMemory': {
+            'nextShots': [],
+            'hitCoords': []
+        }
     };
 };
 
@@ -76,12 +79,23 @@ exports.playerShot = function(req, gameID, game) {
 };
 
 var computerShot = function(game) {
-    var shotData = AIModule.getComputerShotCoords(game.computerShotData, game.computerNextShots);
+    var beforeShipStatus = checkForDestroyedShips(game.playerShipPositions);
+    var shotData = AIModule.getComputerShotCoords(game.computerShotData, game.computerPlayerMemory.nextShots);
     var hitOrMiss = isShotHitOrMiss(shotData, game.playerShipPositions);
     if (hitOrMiss === "H") {
-        AIModule.reportHit(shotData, game.computerNextShots);
+        AIModule.reportHit(shotData, game.computerPlayerMemory);
     }
     game.computerShotData[shotData.x][shotData.y].state = hitOrMiss;
+    var afterShipStatus = checkForDestroyedShips(game.playerShipPositions);
+    checkIfShotDestroyedShip(game, beforeShipStatus, afterShipStatus);
+};
+
+var checkIfShotDestroyedShip = function(game, before, after) {
+    for (var i in before) {
+        if (before[i].status !== after[i].status) {
+            AIModule.reportDestroyedShip(game.computerPlayerMemory, before[i].ship);
+        }
+    }
 };
 
 exports.computerShot = computerShot;
@@ -103,7 +117,10 @@ exports.resetGame = function(games, gameID) {
     game.playerShipPositions = newGameData.playerShipPositions;
     game.computerShotData = newGameData.computerShotData;
     game.computerShipPositions = newGameData.computerShipPositions;
-    game.computerNextShots = [];
+    game.computerPlayerMemory = {
+        'nextShots': [],
+        'hitCoords': []
+    };
 };
 
 var isShotHitOrMiss = function(shotData, shipPositions) {

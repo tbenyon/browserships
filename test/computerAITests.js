@@ -68,16 +68,19 @@ describe('Computer Player', function() {
     });
 
     describe('When an initial hit is made', function() {
-        it('should store next shot lines for the four surrounding cells', function() {
+        it('should store next shot lines for the four surrounding cells', function () {
             testResultGenerator.initResults([{x: 3, y: 3}]);
 
             var testBoardData = getBlankGrid();
             var nextShots = [];
 
             gameModule.computerShot({
-                    computerShotData: testBoardData,
-                    playerShipPositions: testShipPositions,
-                    computerNextShots: nextShots
+                computerShotData: testBoardData,
+                playerShipPositions: testShipPositions,
+                'computerPlayerMemory': {
+                    'nextShots': nextShots,
+                    'hitCoords': []
+                }
             });
             assert.propertyVal(nextShots[0][0], 'x', 3);
             assert.propertyVal(nextShots[0][0], 'y', 2);
@@ -111,7 +114,10 @@ describe('Computer Player', function() {
                 gameModule.computerShot({
                     computerShotData: testBoardData,
                     playerShipPositions: testShipPositions,
-                    computerNextShots: nextShots
+                    'computerPlayerMemory': {
+                        'nextShots': nextShots,
+                        'hitCoords': []
+                    }
                 });
             }
 
@@ -121,9 +127,30 @@ describe('Computer Player', function() {
             assert.propertyVal(nextShot, 'y', 0);
         });
     });
+
+    describe('When a ship is destroyed with the correct amount of shots', function() {
+        it('should clear the stored next shots', function() {
+            testResultGenerator.initResults([
+                {x: 9, y: 4}
+            ]);
+
+            var testBoardData = getBlankGrid();
+            var nextShots = [];
+            var hitCoords = [];
+            for (var i = 0; i < 3; i++) {
+                gameModule.computerShot({
+                    'computerShotData': testBoardData,
+                    'playerShipPositions': testShipPositions,
+                    'computerPlayerMemory': {
+                        'nextShots': nextShots,
+                        'hitCoords': hitCoords
+                    }
+                });
+            }
+            assert.equal(nextShots.length, 0);
+        });
+    });
 });
-
-
 
 var getBlankGrid = function() {
     var board = [];

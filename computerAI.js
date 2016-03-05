@@ -1,4 +1,5 @@
 var coordGenerator = require('./coordinateGenerator.js');
+var shipsInformation = require('./ships.json');
 
 exports.getComputerShotCoords = function(computerShotData, nextShots) {
     var coords;
@@ -16,7 +17,9 @@ exports.getComputerShotCoords = function(computerShotData, nextShots) {
     return coords;
 };
 
-exports.reportHit = function(shotData, nextShots) {
+exports.reportHit = function(shotData, computerPlayerMemory) {
+    computerPlayerMemory.hitCoords.push(shotData);
+    var nextShots = computerPlayerMemory.nextShots;
     var nextShotData = deepCopy(shotData);
 
     if (nextShots.length === 0) {
@@ -43,17 +46,23 @@ exports.reportHit = function(shotData, nextShots) {
             nextShotData.x -= 1;
             nextShots[2].push(deepCopy(nextShotData));
         }
+
         nextShots.push([]);
         nextShotData = deepCopy(shotData);
         while (nextShotData.x < 9) {
             nextShotData.x += 1;
             nextShots[3].push(deepCopy(nextShotData));
         }
-
     }
-
 
     function deepCopy(value) {
         return JSON.parse(JSON.stringify(value));
+    }
+};
+
+exports.reportDestroyedShip = function(computerPlayerMemory, shipName) {
+    if (shipsInformation.ships[shipName].length === computerPlayerMemory.hitCoords.length) {
+        computerPlayerMemory.hitCoords.length = 0;
+        computerPlayerMemory.nextShots.length = 0;
     }
 };
