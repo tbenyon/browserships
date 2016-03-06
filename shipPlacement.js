@@ -11,7 +11,7 @@ exports.checkAndStoreDefinedShipPlacement = function(allBoatsData) {
             'addToX': 0,
             'addToY': 0
         };
-        if (boat.horizontal === true) {
+        if (allBoatsData[boat]['horizontal'] === true) {
             allBoatCoords[boat]['addToX'] = 1;
         } else {
             allBoatCoords[boat]['addToY'] = 1;

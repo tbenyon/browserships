@@ -177,6 +177,34 @@ describe('Computer Player', function() {
             assert.propertyVal(nextShot, 'y', 4);
         });
     });
+
+    describe('When a horizontal ship is against the left side of the board', function() {
+        it('should not shoot off the grid', function() {
+            testResultGenerator.initResults([
+                {x: 0, y: 7},
+                {x: 6, y: 8}
+            ]);
+
+            var testBoardData = getBlankGrid();
+            var nextShots = [];
+            var hitCoords = [];
+            for (var i = 0; i < 3; i++) {
+                gameModule.computerShot({
+                    'computerShotData': testBoardData,
+                    'playerShipPositions': testShipPositions,
+                    'computerPlayerMemory': {
+                        'nextShots': nextShots,
+                        'hitCoords': hitCoords
+                    }
+                });
+            }
+
+            var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
+
+            assert.propertyVal(nextShot, 'x', 1);
+            assert.propertyVal(nextShot, 'y', 7);
+        });
+    });
 });
 
 var getBlankGrid = function() {
