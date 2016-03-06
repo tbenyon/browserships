@@ -42,8 +42,8 @@
 
     "cruiser": {
       "coord": {
-        "x": 8,
-        "y": 8
+        "x": 0,
+        "y": 7
       },
       "length": 2,
       "state": "active",
