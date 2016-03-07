@@ -25,7 +25,12 @@ describe('Computer Player', function() {
     var AI = null;
     var gameModule = null;
     before(function () {
-        mockery.enable();
+
+        mockery.enable({
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+
         mockery.registerMock('./coordinateGenerator.js', testResultGenerator.stub);
         mockery.registerMock('./shipPlacement.js', {generateRandom: function() {
             return testShipPositions;
