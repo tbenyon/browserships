@@ -205,6 +205,36 @@ describe('Computer Player', function() {
             assert.propertyVal(nextShot, 'y', 7);
         });
     });
+
+    describe('When shooting at position that is already taken', function() {
+        it('should shoot at the next location', function() {
+            testResultGenerator.initResults([
+                {x: 0, y: 1},
+                {x: 0, y: 4},
+                {x: 9, y: 9}
+            ]);
+
+            var testBoardData = getBlankGrid();
+            var nextShots = [];
+            var hitCoords = [];
+            for (var i = 0; i < 4; i++) {
+                gameModule.computerShot({
+                    'computerShotData': testBoardData,
+                    'playerShipPositions': testShipPositions,
+                    'computerPlayerMemory': {
+                        'nextShots': nextShots,
+                        'hitCoords': hitCoords
+                    }
+                });
+            }
+
+            var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
+
+            assert.propertyVal(nextShot, 'x', 0);
+            assert.propertyVal(nextShot, 'y', 5);
+        });
+    });
+
 });
 
 var getBlankGrid = function() {

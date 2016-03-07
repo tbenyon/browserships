@@ -3,17 +3,23 @@ var shipsInformation = require('./ships.json');
 
 exports.getComputerShotCoords = function(computerShotData, nextShots) {
     var coords;
-    if (nextShots.length !== 0 && nextShots[0].length === 0) {
-            nextShots.shift();
-    }
 
     do {
+        if (nextShots.length !== 0 && nextShots[0].length === 0) {
+                nextShots.shift();
+        }
+
         if (nextShots.length >= 1) {
             coords = nextShots[0].shift();
         } else {
             coords = coordGenerator.getRandomCoords();
         }
+
+        if (computerShotData[coords.x][coords.y].state != "O") {
+            nextShots.shift();
+        }
     } while (computerShotData[coords.x][coords.y].state != "O");
+
     return coords;
 };
 
