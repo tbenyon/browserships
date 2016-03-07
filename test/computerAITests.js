@@ -71,17 +71,9 @@ describe('Computer Player', function() {
         it('should store next shot lines for the four surrounding cells', function () {
             testResultGenerator.initResults([{x: 3, y: 3}]);
 
-            var testBoardData = getBlankGrid();
-            var nextShots = [];
+            var testGameData = setUpShotDataAndTakeShots(1);
+            var nextShots = testGameData.nextShots;
 
-            gameModule.computerShot({
-                computerShotData: testBoardData,
-                playerShipPositions: testShipPositions,
-                'computerPlayerMemory': {
-                    'nextShots': nextShots,
-                    'hitCoords': []
-                }
-            });
             assert.propertyVal(nextShots[0][0], 'x', 3);
             assert.propertyVal(nextShots[0][0], 'y', 2);
 
@@ -108,18 +100,9 @@ describe('Computer Player', function() {
                {x: 2, y: 2}
            ]);
 
-            var testBoardData = getBlankGrid();
-            var nextShots = [];
-            for (var i = 0; i < 2; i++) {
-                gameModule.computerShot({
-                    computerShotData: testBoardData,
-                    playerShipPositions: testShipPositions,
-                    'computerPlayerMemory': {
-                        'nextShots': nextShots,
-                        'hitCoords': []
-                    }
-                });
-            }
+            var testGameData = setUpShotDataAndTakeShots(2);
+            var testBoardData = testGameData.testBoardData;
+            var nextShots = testGameData.nextShots;
 
             var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
 
@@ -134,19 +117,9 @@ describe('Computer Player', function() {
                 {x: 9, y: 4}
             ]);
 
-            var testBoardData = getBlankGrid();
-            var nextShots = [];
-            var hitCoords = [];
-            for (var i = 0; i < 3; i++) {
-                gameModule.computerShot({
-                    'computerShotData': testBoardData,
-                    'playerShipPositions': testShipPositions,
-                    'computerPlayerMemory': {
-                        'nextShots': nextShots,
-                        'hitCoords': hitCoords
-                    }
-                });
-            }
+            var testGameData = setUpShotDataAndTakeShots(3);
+            var nextShots = testGameData.nextShots;
+
             assert.equal(nextShots.length, 0);
         });
     });
@@ -157,20 +130,9 @@ describe('Computer Player', function() {
                 {x: 9, y: 3}
             ]);
 
-            var testBoardData = getBlankGrid();
-            var nextShots = [];
-            var hitCoords = [];
-            for (var i = 0; i < 3; i++) {
-                gameModule.computerShot({
-                    'computerShotData': testBoardData,
-                    'playerShipPositions': testShipPositions,
-                    'computerPlayerMemory': {
-                        'nextShots': nextShots,
-                        'hitCoords': hitCoords
-                    }
-                });
-            }
-
+            var testGameData = setUpShotDataAndTakeShots(3);
+            var testBoardData = testGameData.testBoardData;
+            var nextShots = testGameData.nextShots;
             var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
 
             assert.propertyVal(nextShot, 'x', 9);
@@ -185,19 +147,9 @@ describe('Computer Player', function() {
                 {x: 6, y: 8}
             ]);
 
-            var testBoardData = getBlankGrid();
-            var nextShots = [];
-            var hitCoords = [];
-            for (var i = 0; i < 3; i++) {
-                gameModule.computerShot({
-                    'computerShotData': testBoardData,
-                    'playerShipPositions': testShipPositions,
-                    'computerPlayerMemory': {
-                        'nextShots': nextShots,
-                        'hitCoords': hitCoords
-                    }
-                });
-            }
+            var testGameData = setUpShotDataAndTakeShots(3);
+            var testBoardData = testGameData.testBoardData;
+            var nextShots = testGameData.nextShots;
 
             var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
 
@@ -214,19 +166,9 @@ describe('Computer Player', function() {
                 {x: 9, y: 9}
             ]);
 
-            var testBoardData = getBlankGrid();
-            var nextShots = [];
-            var hitCoords = [];
-            for (var i = 0; i < 4; i++) {
-                gameModule.computerShot({
-                    'computerShotData': testBoardData,
-                    'playerShipPositions': testShipPositions,
-                    'computerPlayerMemory': {
-                        'nextShots': nextShots,
-                        'hitCoords': hitCoords
-                    }
-                });
-            }
+            var testGameData = setUpShotDataAndTakeShots(4);
+            var testBoardData = testGameData.testBoardData;
+            var nextShots = testGameData.nextShots;
 
             var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
 
@@ -234,6 +176,26 @@ describe('Computer Player', function() {
             assert.propertyVal(nextShot, 'y', 5);
         });
     });
+
+    function setUpShotDataAndTakeShots(numberOfShots) {
+        var testBoardData = getBlankGrid();
+        var nextShots = [];
+        var hitCoords = [];
+        for (var i = 0; i < numberOfShots; i++) {
+            gameModule.computerShot({
+                'computerShotData': testBoardData,
+                'playerShipPositions': testShipPositions,
+                'computerPlayerMemory': {
+                    'nextShots': nextShots,
+                    'hitCoords': hitCoords
+                }
+            });
+        }
+        return {
+            testBoardData: testBoardData,
+            nextShots: nextShots
+        }
+    }
 
 });
 
