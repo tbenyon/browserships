@@ -127,9 +127,9 @@ function addShipPositionsToBoardData(board, shipPositions) {
             y = segmentObj.y;
             board[y][x].shipImage = "/images/ships/" + ship + i + ".png";
             if (shipPositions[ship][segment].horizontal === true) {
-                board[y][x].class = 'scaleImage';
+                board[y][x]['class'] = 'scaleImage';
             } else {
-                board[y][x].class = 'rotateImage';
+                board[y][x]['class'] = 'rotateImage';
             }
 
         }
