@@ -60,10 +60,6 @@ exports.reportHit = function(shotData, computerPlayerMemory) {
             nextShots[3].push(deepCopy(nextShotData));
         }
     }
-
-    function deepCopy(value) {
-        return JSON.parse(JSON.stringify(value));
-    }
 };
 
 exports.reportMiss = function(computerMemory) {
@@ -71,8 +67,84 @@ exports.reportMiss = function(computerMemory) {
 };
 
 exports.reportDestroyedShip = function(computerPlayerMemory, shipName) {
-    if (shipsInformation.ships[shipName].length === computerPlayerMemory.hitCoords.length) {
-        computerPlayerMemory.hitCoords.length = 0;
-        computerPlayerMemory.nextShots.length = 0;
+    var hits = computerPlayerMemory.hitCoords;
+    var nextShots = computerPlayerMemory.nextShots;
+
+    computerPlayerMemory.nextShots.length = 0;
+
+    if (shipsInformation.ships[shipName].length !== hits.length) {
+        placeNextShotsFromTwoShipsHitKnowledge();
+    }
+
+    hits.length = 0;
+
+    function placeNextShotsFromTwoShipsHitKnowledge() {
+        if (areShotsVertical()) {
+            var highestLowestData = findHighestAndLowestHits();
+            var highest = highestLowestData[0];
+            var lowest = highestLowestData[1];
+            var nextShotData = {};
+
+            computerPlayerMemory.nextShots.push([]);
+            nextShotData = deepCopy(highest);
+            while (nextShotData.x > -1) {
+                nextShotData.x -= 1;
+                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
+            }
+
+            computerPlayerMemory.nextShots.push([]);
+            nextShotData = deepCopy(highest);
+            while (nextShotData.x < 9) {
+                nextShotData.x += 1;
+                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
+            }
+
+            computerPlayerMemory.nextShots.push([]);
+            nextShotData = deepCopy(lowest);
+            while (nextShotData.x > -1) {
+                nextShotData.x -= 1;
+                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
+            }
+
+            computerPlayerMemory.nextShots.push([]);
+            nextShotData = deepCopy(lowest);
+            while (nextShotData.x < 9) {
+                nextShotData.x += 1;
+                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
+            }
+        }
+
+        function areShotsVertical() {
+            var lastTwoHits = hits.slice(-2);
+            if (lastTwoHits[0].x === lastTwoHits[1].x) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function findHighestAndLowestHits() {
+            var highest = {};
+            var lowest = {};
+            for (var i in hits) {
+                if (i === "0") {
+                    highest = hits[i];
+                    lowest = hits[i];
+                } else {
+                    if (hits[i].y < highest.y) {
+                        highest = hits[i];
+                    }
+
+                    if (hits[i].y > lowest.y) {
+                        lowest = hits[i];
+                    }
+                }
+            }
+            return [highest, lowest]
+        }
     }
 };
+
+function deepCopy(value) {
+    return JSON.parse(JSON.stringify(value));
+}
