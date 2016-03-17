@@ -1,9 +1,8 @@
 var assert = require('chai').assert;
 var mockery = require('mockery');
-var shipPlacement = require('../shipPlacement.js');
+var builderModule = require('./shipsBuilder.js');
 
-var testShipData = require('../ships.json');
-var testShipPositions = shipPlacement.checkAndStoreDefinedShipPlacement(testShipData.ships);
+var shipsBuilder = new builderModule.shipsBuilder();
 
 describe('Computer Player', function() {
 
@@ -76,7 +75,8 @@ describe('Computer Player', function() {
         it('should store next shot lines for the four surrounding cells', function () {
             testResultGenerator.initResults([{x: 3, y: 3}]);
 
-            var testGameData = setUpShotDataAndTakeShots(1);
+            var playerShipPositions = shipsBuilder.build();
+            var testGameData = setUpShotDataAndTakeShots(1, playerShipPositions);
             var nextShots = testGameData.nextShots;
 
             assert.propertyVal(nextShots[0][0], 'x', 3);
@@ -105,7 +105,8 @@ describe('Computer Player', function() {
                {x: 2, y: 2}
            ]);
 
-            var testGameData = setUpShotDataAndTakeShots(2);
+            var playerShipPositions = shipsBuilder.build();
+            var testGameData = setUpShotDataAndTakeShots(2, playerShipPositions);
             var testBoardData = testGameData.testBoardData;
             var nextShots = testGameData.nextShots;
 
@@ -122,7 +123,8 @@ describe('Computer Player', function() {
                 {x: 9, y: 4}
             ]);
 
-            var testGameData = setUpShotDataAndTakeShots(3);
+            var playerShipPositions = shipsBuilder.build();
+            var testGameData = setUpShotDataAndTakeShots(3, playerShipPositions);
             var nextShots = testGameData.nextShots;
 
             assert.equal(nextShots.length, 0);
@@ -135,7 +137,8 @@ describe('Computer Player', function() {
                 {x: 9, y: 3}
             ]);
 
-            var testGameData = setUpShotDataAndTakeShots(3);
+            var playerShipPositions = shipsBuilder.build();
+            var testGameData = setUpShotDataAndTakeShots(3, playerShipPositions);
             var testBoardData = testGameData.testBoardData;
             var nextShots = testGameData.nextShots;
             var nextShot = AI.getComputerShotCoords(testBoardData, nextShots);
@@ -152,7 +155,8 @@ describe('Computer Player', function() {
                 {x: 6, y: 8}
             ]);
 
-            var testGameData = setUpShotDataAndTakeShots(3);
+            var playerShipPositions = shipsBuilder.build();
+            var testGameData = setUpShotDataAndTakeShots(3, playerShipPositions);
             var testBoardData = testGameData.testBoardData;
             var nextShots = testGameData.nextShots;
 
@@ -170,8 +174,8 @@ describe('Computer Player', function() {
                 {x: 0, y: 4},
                 {x: 9, y: 9}
             ]);
-
-            var testGameData = setUpShotDataAndTakeShots(4);
+            var playerShipPositions = shipsBuilder.build();
+            var testGameData = setUpShotDataAndTakeShots(4, playerShipPositions);
             var testBoardData = testGameData.testBoardData;
             var nextShots = testGameData.nextShots;
 
@@ -190,8 +194,8 @@ describe('Computer Player', function() {
                     {x: 0, y: 4},
                     {x: 9, y: 9}
                 ]);
-
-                var testGameData = setUpShotDataAndTakeShots(5);
+                var playerShipPositions = shipsBuilder.build();
+                var testGameData = setUpShotDataAndTakeShots(5, playerShipPositions);
                 var nextShots = testGameData.nextShots;
 
                 assert.equal(nextShots.length, 4);
@@ -214,14 +218,14 @@ describe('Computer Player', function() {
         })
     });
 
-    function setUpShotDataAndTakeShots(numberOfShots) {
+    function setUpShotDataAndTakeShots(numberOfShots, playerShipPositions) {
         var testBoardData = getBlankGrid();
         var nextShots = [];
         var hitCoords = [];
         for (var i = 0; i < numberOfShots; i++) {
             gameModule.computerShot({
                 'computerShotData': testBoardData,
-                'playerShipPositions': testShipPositions,
+                'playerShipPositions': playerShipPositions,
                 'computerPlayerMemory': {
                     'nextShots': nextShots,
                     'hitCoords': hitCoords
@@ -233,7 +237,6 @@ describe('Computer Player', function() {
             nextShots: nextShots
         }
     }
-
 });
 
 var getBlankGrid = function() {
