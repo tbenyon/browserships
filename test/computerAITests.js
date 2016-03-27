@@ -187,34 +187,32 @@ describe('Computer Player', function() {
     });
 
     describe('When a ship is destroyed with more shots than are required', function () {
-        describe('and you are shooting vertically', function() {
-            it('should create shot lists horizontally from the top and bottom of shot locations', function() {
-                testResultGenerator.initResults([
-                    {x: 3, y: 3},
-                    {x: 0, y: 4},
-                    {x: 9, y: 9}
-                ]);
-                var playerShipPositions = shipsBuilder.build();
-                var testGameData = setUpShotDataAndTakeShots(5, playerShipPositions);
-                var nextShots = testGameData.nextShots;
+        it('should add to nextShots for the hits that were not part of the destroyed ship', function() {
+            testResultGenerator.initResults([
+                {x: 3, y: 3},
+                {x: 0, y: 4},
+                {x: 9, y: 9}
+            ]);
+            var playerShipPositions = shipsBuilder.build();
+            var testGameData = setUpShotDataAndTakeShots(5, playerShipPositions);
+            var nextShots = testGameData.nextShots;
 
-                assert.equal(nextShots.length, 4);
+            assert.equal(nextShots.length, 4);
 
-                assert.propertyVal(nextShots[0][0], 'x', 2);
-                assert.propertyVal(nextShots[0][0], 'y', 1);
+            assert.propertyVal(nextShots[0][0], 'x', 3);
+            assert.propertyVal(nextShots[0][0], 'y', 0);
 
-                assert.propertyVal(nextShots[0][2], 'x', 0);
-                assert.propertyVal(nextShots[0][2], 'y', 1);
+            assert.propertyVal(nextShots[1][0], 'x', 3);
+            assert.propertyVal(nextShots[1][0], 'y', 2);
 
-                assert.propertyVal(nextShots[1][0], 'x', 4);
-                assert.propertyVal(nextShots[1][0], 'y', 1);
+            assert.propertyVal(nextShots[1][1], 'x', 3);
+            assert.propertyVal(nextShots[1][1], 'y', 3);
 
-                assert.propertyVal(nextShots[2][0], 'x', 2);
-                assert.propertyVal(nextShots[2][0], 'y', 4);
+            assert.propertyVal(nextShots[2][2], 'x', 0);
+            assert.propertyVal(nextShots[2][2], 'y', 1);
 
-                assert.propertyVal(nextShots[3][1], 'x', 5);
-                assert.propertyVal(nextShots[3][1], 'y', 4);
-            })
+            assert.propertyVal(nextShots[3][0], 'x', 4);
+            assert.propertyVal(nextShots[3][0], 'y', 1);
         })
     });
 

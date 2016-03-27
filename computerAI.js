@@ -26,39 +26,9 @@ exports.getComputerShotCoords = function(computerShotData, nextShots) {
 exports.reportHit = function(shotData, computerPlayerMemory) {
     computerPlayerMemory.hitCoords.push(shotData);
     var nextShots = computerPlayerMemory.nextShots;
-    var nextShotData = deepCopy(shotData);
 
     if (nextShots.length === 0) {
-        storeDataIfNextShotsIsEmpty(nextShotData);
-    }
-
-    function storeDataIfNextShotsIsEmpty() {
-        nextShots.push([]);
-        while (nextShotData.y > 0) {
-            nextShotData.y -= 1;
-            nextShots[0].push(deepCopy(nextShotData));
-        }
-
-        nextShots.push([]);
-        nextShotData = deepCopy(shotData);
-        while (nextShotData.y < 9) {
-            nextShotData.y += 1;
-            nextShots[1].push(deepCopy(nextShotData));
-        }
-
-        nextShots.push([]);
-        nextShotData = deepCopy(shotData);
-        while (nextShotData.x > 0) {
-            nextShotData.x -= 1;
-            nextShots[2].push(deepCopy(nextShotData));
-        }
-
-        nextShots.push([]);
-        nextShotData = deepCopy(shotData);
-        while (nextShotData.x < 9) {
-            nextShotData.x += 1;
-            nextShots[3].push(deepCopy(nextShotData));
-        }
+        addFourLineShotsToNextShots(nextShots, shotData);
     }
 };
 
@@ -69,81 +39,96 @@ exports.reportMiss = function(computerMemory) {
 exports.reportDestroyedShip = function(computerPlayerMemory, shipName) {
     var hits = computerPlayerMemory.hitCoords;
     var nextShots = computerPlayerMemory.nextShots;
+    var killShot = hits[hits.length - 1];
 
     computerPlayerMemory.nextShots.length = 0;
 
-    if (shipsInformation.ships[shipName].length !== hits.length) {
-        placeNextShotsFromTwoShipsHitKnowledge();
+    deleteDestroyedShipHits();
+
+    for (var i = 0; i < hits.length; i++) {
+        addFourLineShotsToNextShots(nextShots, hits[i])
     }
 
-    hits.length = 0;
+    function deleteDestroyedShipHits() {
+        var hitsToDelete = getHitsToDelete();
 
-    function placeNextShotsFromTwoShipsHitKnowledge() {
-        if (areShotsVertical()) {
-            var highestLowestData = findHighestAndLowestHits();
-            var highest = highestLowestData[0];
-            var lowest = highestLowestData[1];
-            var nextShotData = {};
-
-            computerPlayerMemory.nextShots.push([]);
-            nextShotData = deepCopy(highest);
-            while (nextShotData.x > -1) {
-                nextShotData.x -= 1;
-                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
-            }
-
-            computerPlayerMemory.nextShots.push([]);
-            nextShotData = deepCopy(highest);
-            while (nextShotData.x < 9) {
-                nextShotData.x += 1;
-                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
-            }
-
-            computerPlayerMemory.nextShots.push([]);
-            nextShotData = deepCopy(lowest);
-            while (nextShotData.x > -1) {
-                nextShotData.x -= 1;
-                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
-            }
-
-            computerPlayerMemory.nextShots.push([]);
-            nextShotData = deepCopy(lowest);
-            while (nextShotData.x < 9) {
-                nextShotData.x += 1;
-                nextShots[nextShots.length - 1].push(deepCopy(nextShotData));
-            }
-        }
-
-        function areShotsVertical() {
-            var lastTwoHits = hits.slice(-2);
-            if (lastTwoHits[0].x === lastTwoHits[1].x) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        function findHighestAndLowestHits() {
-            var highest = {};
-            var lowest = {};
-            for (var i in hits) {
-                if (i === "0") {
-                    highest = hits[i];
-                    lowest = hits[i];
-                } else {
-                    if (hits[i].y < highest.y) {
-                        highest = hits[i];
-                    }
-
-                    if (hits[i].y > lowest.y) {
-                        lowest = hits[i];
-                    }
+        for (var i = hits.length - 1; i >= 0; i--) {
+            for (var j = hitsToDelete.length - 1; j >= 0; j--) {
+                if (JSON.stringify(hits[i]) === JSON.stringify(hitsToDelete[j])) {
+                    hits.splice(i, 1);
                 }
             }
-            return [highest, lowest]
+        }
+
+        function getHitsToDelete() {
+            var destroyedShipDirection = getShipDirection();
+            var hitsToDelete = [];
+            var destroyedShipCoord = deepCopy(killShot);
+            for (var i = 0; i < getDestroyedShipLength(); i++) {
+                hitsToDelete.push(deepCopy(destroyedShipCoord));
+                destroyedShipCoord.x += destroyedShipDirection.x;
+                destroyedShipCoord.y += destroyedShipDirection.y;
+            }
+            return hitsToDelete
+        }
+
+        function getDestroyedShipLength() {
+            var shipLength;
+            for (var ship in shipsInformation.ships) {
+                if (shipName === ship) {
+                    shipLength = shipsInformation.ships[ship]['length']
+                }
+            }
+            return shipLength;
+        }
+
+        function getShipDirection() {
+            for (var i in hits) {
+                if (hits[i].x === killShot.x && hits[i].y === killShot.y - 1) {
+                    return {'x': 0, 'y': -1};
+                } else if (hits[i].x === killShot.x && hits[i].y === killShot.y + 1) {
+                    return {'x': 0, 'y': 1};
+                } else if (hits[i].x === killShot.x - 1 && hits[i].y === killShot.y) {
+                    return {'x': -1, 'y': 0};
+                } else if (hits[i].x === killShot.x + 1 && hits[i].y === killShot.y) {
+                    return {'x': 1, 'y': 0};
+                }
+            }
         }
     }
 };
+
+function addFourLineShotsToNextShots(nextShots, shotData) {
+
+    var nextShotData = deepCopy(shotData);
+
+    nextShots.push([]);
+    while (nextShotData.y > 0) {
+        nextShotData.y -= 1;
+        nextShots[0].push(deepCopy(nextShotData));
+    }
+
+    nextShots.push([]);
+    nextShotData = deepCopy(shotData);
+    while (nextShotData.y < 9) {
+        nextShotData.y += 1;
+        nextShots[1].push(deepCopy(nextShotData));
+    }
+
+    nextShots.push([]);
+    nextShotData = deepCopy(shotData);
+    while (nextShotData.x > 0) {
+        nextShotData.x -= 1;
+        nextShots[2].push(deepCopy(nextShotData));
+    }
+
+    nextShots.push([]);
+    nextShotData = deepCopy(shotData);
+    while (nextShotData.x < 9) {
+        nextShotData.x += 1;
+        nextShots[3].push(deepCopy(nextShotData));
+    }
+}
 
 function deepCopy(value) {
     return JSON.parse(JSON.stringify(value));
